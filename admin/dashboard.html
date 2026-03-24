@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="icon" href="../images/logo.png" type="image/x-icon" sizes="64x64">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/admin.css">
+    <script src="/js/admin/adminAuth.js"></script>
+
+</head>
+
+<body>
+    <nav class="navbar navbar-light bg-light border-bottom d-md-none px-3">
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+        <span class="navbar-brand mx-auto">Dashboard</span>
+
+    </nav>
+    <div class="offcanvas offcanvas-start bg-light text-dark d-md-none" tabindex="-1" id="mobileSidebar">
+
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">Kickbarks</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas">
+            </button>
+        </div>
+
+        <div class="offcanvas-body">
+
+            <ul class="nav flex-column">
+
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="/admin/dashboard.html">Dashboard</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="/admin/products.html">Products</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="/admin/orders.html">Orders</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="/admin/users.html">Users</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="/admin/vouchers.html">Vouchers</a>
+                </li>
+
+                <li class="mt-3">
+                    <button onclick="adminLogout()" class="btn btn-danger w-100">
+                        Logout
+                    </button>
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+    <div class="container-fluid">
+
+        <div class="row">
+
+            <!-- SIDEBAR -->
+            <div class="col-md-2 bg-light text-dark min-vh-100 p-3 d-none d-md-block border-end">
+
+                <h4 class="mb-4">Kickbarks</h4>
+
+                <ul class="nav flex-column">
+
+                    <li class="nav-item">
+                        <a class="nav-link text-dark active" href="/admin/dashboard.html">Dashboard</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/admin/products.html">Products</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/admin/orders.html">Orders</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/admin/users.html">Users</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/admin/vouchers.html">Vouchers</a>
+                    </li>
+
+                    <li class="nav-item mt-3">
+                        <button onclick="adminLogout()" class="btn btn-danger w-100">Logout</button>
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <!-- MAIN CONTENT -->
+            <div class="col-md-10 p-4">
+
+                <h1 class="mb-4">Dashboard</h1>
+
+                <!-- SALES KPIs -->
+                <h5 class="mb-3">Sales Overview</h5>
+
+                <div class="row g-3 mb-4">
+
+                    <div class="col-md-3">
+                        <div class="card shadow-sm p-3">
+                            <p class="text-muted mb-1">Today's Revenue</p>
+                            <h4>₱<span id="todaySales">0</span></h4>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card shadow-sm p-3">
+                            <p class="text-muted mb-1">Orders Today</p>
+                            <h4><span id="ordersToday">0</span></h4>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card shadow-sm p-3">
+                            <p class="text-muted mb-1">Products Sold</p>
+                            <h4><span id="productsSold">0</span></h4>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card shadow-sm p-3">
+                            <p class="text-muted mb-1">Total Sales</p>
+                            <h4>₱<span id="totalSales">0</span></h4>
+                            <small class="text-muted">Completed orders only</small>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ORDERS KPIs -->
+                <h5 class="mb-3">Orders Overview</h5>
+
+                <div class="row g-3 mb-4">
+
+                    <div class="col-md-3">
+                        <div class="card shadow-sm p-3">
+                            <p class="text-muted mb-1">Total Orders</p>
+                            <h4><span id="totalOrders">0</span></h4>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card shadow-sm p-3 border-warning">
+                            <p class="text-muted mb-1">Pending Orders</p>
+                            <h4><span id="pendingOrders">0</span></h4>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card shadow-sm p-3">
+                            <p class="text-muted mb-1">Total Products</p>
+                            <h4><span id="totalProducts">0</span></h4>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card shadow-sm p-3">
+                            <p class="text-muted mb-1">Active Vouchers</p>
+                            <h4><span id="activeVouchers">0</span></h4>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <!-- CHART BUTTONS -->
+                <div class="mb-3">
+                    <button class="btn btn-outline-primary btn-sm" onclick="loadDashboard('week')">Last 7 Days</button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="loadDashboard('month')">Last 30
+                        Days</button>
+                </div>
+
+
+                <!-- SALES CHART -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="mb-3">Sales – Last 7 Days</h5>
+                        <canvas id="salesChart" height="90"></canvas>
+                    </div>
+                </div>
+
+
+                <!-- RECENT + TOP PRODUCTS -->
+                <div class="row g-4">
+
+                    <div class="col-md-6">
+
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+
+                                <div class="d-flex justify-content-between mb-3">
+                                    <h5>Recent Orders</h5>
+                                    <a href="/admin/orders.html">View all</a>
+                                </div>
+
+                                <ul id="recentOrders" class="list-group list-group-flush"></ul>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+
+                                <h5 class="mb-3">Top Products</h5>
+
+                                <ul id="topProducts" class="list-group list-group-flush"></ul>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/ui.js"></script>
+    <script src="../js/admin/dashboard.js"></script>
+
+</body>
+
+</html>

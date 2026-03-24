@@ -1,0 +1,299 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Kickbarks Moto Shop | Premium Motorcycle Parts & Gear</title>
+  <link rel="icon" href="./images/logo.png" type="image/x-icon" sizes="64x64">
+  <meta name="description"
+    content="Kickbarks Moto Shop offers premium motorcycle parts, accessories, and riding gear for real riders. Ride better with quality you can trust." />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="./css/theme.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap"
+    rel="stylesheet">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg moto-nav">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+        <img src="./images/logo.png" alt="Kickbarks" class="navbar-logo" />
+        <span class="fw-bold">Kickbarks Moto Shop</span>
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item">
+            <a class="nav-link" href="./shop.html">Shop</a>
+          </li>
+          <!-- <li class="nav-item">
+              <a class="nav-link" href="./cart.html">Cart</a>
+            </li> -->
+          <li class="nav-item">
+            <a class="nav-link" href="./cart.html">
+              Cart <span class="badge bg-danger" id="cartCount">0</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="./about.html">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./contact.html">Contact</a>
+          </li>
+          <li class="nav-item" id="nav-login">
+            <a class="nav-link" href="./login.html">Login</a>
+          </li>
+          <li class="nav-item d-none" id="nav-profile">
+            <a class="nav-link" href="./profile.html">Profile</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- HERO SECTION -->
+  <section class="hero-premium">
+    <div class="container">
+      <div class="row align-items-center">
+
+        <!-- LEFT TEXT -->
+        <div class="col-md-6">
+          <h1 class="hero-title">
+            Upgrade Your Ride with<br>
+            <span>Premium Moto Parts</span>
+          </h1>
+
+          <p class="hero-sub">
+            Performance parts, accessories, and upgrades for every rider.
+            Built for quality. Built for speed.
+          </p>
+
+          <div class="d-flex gap-3 mt-3">
+            <a href="./shop.html" class="btn btn-primary btn-lg">Shop Now</a>
+            <a href="#featuredProducts" class="btn btn-outline-dark btn-lg">Browse Products</a>
+          </div>
+        </div>
+
+        <!-- RIGHT IMAGE -->
+        <div class="col-md-6 text-center">
+          <img src="./images/Motorcycle v1.png" class="hero-img">
+        </div>
+
+      </div>
+    </div>
+  </section>
+  <!-- CATEGORY CALLOUTS -->
+  <section class="brand-section py-5">
+    <div class="container text-center">
+
+      <h2 class="fw-bold mb-4">Trusted Brands</h2>
+
+      <div class="brand-slider">
+
+        <div class="brand-track">
+
+          <img src="./images/brands/cworkslogo.png">
+          <img src="./images/brands/jvtlogo.png">
+          <img src="./images/brands/rcb.png">
+          <img src="./images/brands/rs8.png">
+
+
+          <!-- duplicate for smooth infinite scroll -->
+
+          <img src="./images/brands/cworkslogo.png">
+          <img src="./images/brands/jvtlogo.png">
+          <img src="./images/brands/rcb.png">
+          <img src="./images/brands/rs8.png">
+
+          <!-- duplicate for smooth infinite scroll -->
+
+          <img src="./images/brands/cworkslogo.png">
+          <img src="./images/brands/jvtlogo.png">
+          <img src="./images/brands/rcb.png">
+          <img src="./images/brands/rs8.png">
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+  <section class="category-section py-4">
+    <div class="container">
+
+
+      <h2 class="fw-bold text-center mb-4">Shop by Category</h2>
+
+      <div class="row justify-content-center text-center g-3">
+
+        <div class="col-6 col-md-3">
+          <a href="./shop.html?category=parts" class="category-box">
+            Parts
+          </a>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <a href="./shop.html?category=gear" class="category-box">
+            Riding Gear
+          </a>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <a href="./shop.html?category=suspension" class="category-box">
+            Suspension
+          </a>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <a href="./shop.html?category=accessories" class="category-box">
+            Accessories
+          </a>
+        </div>
+
+      </div>
+
+
+    </div>
+  </section>
+
+
+
+  <!-- FEATURED PRODUCTS -->
+  <section class="section-padding py-5 featured-section">
+    <div class="container">
+      <h2 class="fw-bold text-center mb-4">Featured Products</h2>
+
+      <div id="featuredProducts" class="row g-4"></div>
+
+      <div class="text-center mt-4">
+        <a href="./shop.html" class="btn btn-outline-primary">
+          View All Products
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST SIGNALS -->
+  <section class="section-padding trust-section">
+    <div class="container">
+      <div class="row text-center gy-4">
+        <div class="col-md-4">
+          <div class="trust-item">
+            <span>🚚</span>
+            <h6>Fast Shipping</h6>
+            <p>Quick delivery nationwide</p>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="trust-item">
+            <span>🔒</span>
+            <h6>Secure Checkout</h6>
+            <p>Your payments are protected</p>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="trust-item">
+            <span>🏍️</span>
+            <h6>Rider Support</h6>
+            <p>Built by riders, for riders</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- PREMIUM WELCOME POPUP -->
+  <div class="modal fade" id="welcomeModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content welcome-box text-center p-4">
+
+        <h3 id="welcomeTitle" class="fw-bold mb-2">
+          Welcome to Kickbarks Moto Shop
+        </h3>
+
+        <p id="welcomeMessage" class="text-muted mb-3">
+          Premium motorcycle parts for real riders.
+        </p>
+
+        <div id="voucherBox" class="voucher-box d-none mb-3">
+          🎟 Your Welcome Voucher
+          <div class="voucher-code">WELCOME</div>
+          <small>₱100 OFF your first order</small>
+        </div>
+
+        <a href="./shop.html" class="btn btn-dark w-100">
+          Start Shopping
+        </a>
+
+      </div>
+    </div>
+  </div>
+  <footer class="footer-premium mt-5">
+    <div class="container">
+      <div class="row text-center text-md-start">
+
+        <!-- STORE INFO -->
+        <div class="col-md-3 mb-3">
+          <h5>Kickbarks Moto Shop</h5>
+          <p class="small text-secondary mb-0">
+            Thank you for trusting Kickbarks Moto Shop.<br />
+            Keep riding safe and strong.
+          </p>
+        </div>
+
+        <!-- QUICK LINKS -->
+        <div class="col-md-3 mb-3">
+          <h6>Quick Links</h6>
+          <ul class="list-unstyled">
+            <li><a href="./shop.html">Shop</a></li>
+            <li><a href="./cart.html">Cart</a></li>
+            <li><a href="./profile.html">My Account</a></li>
+          </ul>
+        </div>
+
+        <!-- PAYMENT METHODS -->
+        <div class="col-md-3 mb-3">
+          <h6>Payment Methods</h6>
+
+          <p class="small mb-1">
+            💵 Cash on Delivery (COD)
+          </p>
+
+          <p class="small mb-1">
+            🅿️ PayPal
+          </p>
+
+          <p class="small text-secondary mb-0">
+            Debit / Credit Card<br>
+            (Visa • Mastercard via PayPal)
+          </p>
+        </div>
+
+        <!-- CONTACT -->
+        <div class="col-md-3 mb-3">
+          <h6>Contact</h6>
+          <p class="small mb-1">kickbarks@gmail.com</p>
+          <p class="small">© 2026 Kickbarks Moto Shop</p>
+        </div>
+
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="./js/ui.js"></script>
+  <script src="./js/navbar.js"></script>
+  <script src="./js/welcome.js"></script>
+  <script src="./js/featured.js"></script>
+</body>
+
+</html>

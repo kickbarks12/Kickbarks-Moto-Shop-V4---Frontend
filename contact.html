@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="./images/logo.png" type="image/x-icon" sizes="64x64">
+    <link rel="stylesheet" href="./css/theme.css">
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg moto-nav">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+                <img src="./images/logo.png" alt="Kickbarks" class="navbar-logo" />
+                <span class="fw-bold">Kickbarks Moto Shop</span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./shop.html">Shop</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="./cart.html">
+                            Cart <span class="badge bg-danger" id="cartCount">0</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="./about.html">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./contact.html">Contact</a>
+                    </li>
+                    <li class="nav-item" id="nav-login">
+                        <a class="nav-link" href="./login.html">Login</a>
+                    </li>
+                    <li class="nav-item d-none" id="nav-profile">
+                        <a class="nav-link" href="./profile.html">Profile</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="container py-5" style="max-width:1000px;">
+        <div class="contact-hero text-center mb-5">
+            <h1 class="contact-title">Contact Us</h1>
+            <p class="contact-sub">
+                Have questions or want to visit our store? Reach out to us anytime.
+            </p>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- CONTACT INFO -->
+            <div class="col-lg-5">
+                <div class="card p-4 shadow-sm h-100">
+                    <h5 class="fw-bold mb-3">Store Information</h5>
+
+                    <p class="mb-2">🏪 <b>Store:</b> Kickbarks Moto Shop</p>
+                    <p class="mb-2">📍 <b>Address:</b> YOUR STORE ADDRESS HERE</p>
+                    <p class="mb-2">📞 <b>Phone:</b> 09XXXXXXXXX</p>
+                    <p class="mb-2">📧 <b>Email:</b> kickbarksmoto@gmail.com</p>
+                    <p class="mb-0">⏰ <b>Hours:</b> Mon - Sun | 9:00 AM - 7:00 PM</p>
+                </div>
+            </div>
+
+            <!-- GOOGLE MAP -->
+            <div class="col-lg-7">
+                <div class="card shadow-sm p-2">
+                    <iframe src="https://www.google.com/maps?q=Quezon%20City&output=embed" width="100%" height="350"
+                        style="border:0; border-radius:12px;" allowfullscreen="" loading="lazy">
+                    </iframe>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- CONTACT FORM -->
+        <div class="mt-5" style="max-width:700px;margin:auto;">
+            <form id="contactForm" class="card p-4 shadow-sm">
+                <h5 class="fw-bold mb-3">Send us a message</h5>
+
+                <div class="mb-3">
+                    <label class="form-label">Name</label>
+                    <input type="text" class="form-control" id="contactName" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" id="contactEmail" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Message</label>
+                    <textarea class="form-control" id="contactMessage" rows="4" required></textarea>
+                </div>
+
+                <button class="btn btn-dark w-100">Send Message</button>
+                <div id="contactMsg" class="text-success mt-3"></div>
+            </form>
+        </div>
+
+    </section>
+    <footer class="footer-premium mt-5">
+        <div class="container">
+            <div class="row text-center text-md-start">
+
+                <!-- STORE INFO -->
+                <div class="col-md-3 mb-3">
+                    <h5>Kickbarks Moto Shop</h5>
+                    <p class="small text-secondary mb-0">
+                        Thank you for trusting Kickbarks Moto Shop.<br />
+                        Keep riding safe and strong.
+                    </p>
+                </div>
+
+                <!-- QUICK LINKS -->
+                <div class="col-md-3 mb-3">
+                    <h6>Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="./shop.html">Shop</a></li>
+                        <li><a href="./cart.html">Cart</a></li>
+                        <li><a href="./profile.html">My Account</a></li>
+                    </ul>
+                </div>
+
+                <!-- PAYMENT METHODS -->
+                <div class="col-md-3 mb-3">
+                    <h6>Payment Methods</h6>
+
+                    <p class="small mb-1">
+                        💵 Cash on Delivery (COD)
+                    </p>
+
+                    <p class="small mb-1">
+                        🅿️ PayPal
+                    </p>
+
+                    <p class="small text-secondary mb-0">
+                        Debit / Credit Card<br>
+                        (Visa • Mastercard via PayPal)
+                    </p>
+                </div>
+
+                <!-- CONTACT -->
+                <div class="col-md-3 mb-3">
+                    <h6>Contact</h6>
+                    <p class="small mb-1">kickbarks@gmail.com</p>
+                    <p class="small">© 2026 Kickbarks Moto Shop</p>
+                </div>
+
+            </div>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./js/ui.js"></script>
+    <script src="./js/navbar.js"></script>
+    <script src="./js/contact.js"></script>
+</body>
+
+</html>

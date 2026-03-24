@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Product Details | Kickbarks Moto Shop</title>
+  <meta name="description" content="View product details, pricing, and availability at Kickbarks Moto Shop." />
+  <link rel="icon" href="./images/logo.png" type="image/x-icon" sizes="64x64">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="./css/theme.css" />
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg moto-nav">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+        <img src="./images/logo.png" alt="Kickbarks" class="navbar-logo" />
+        <span class="fw-bold">Kickbarks Moto Shop</span>
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item">
+            <a class="nav-link" href="./shop.html">Shop</a>
+          </li>
+          <!-- <li class="nav-item">
+              <a class="nav-link" href="./cart.html">Cart</a>
+            </li> -->
+          <li class="nav-item">
+            <a class="nav-link" href="./cart.html">
+              Cart <span class="badge bg-danger" id="cartCount">0</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="./about.html">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./contact.html">Contact</a>
+          </li>
+          <li class="nav-item" id="nav-login">
+            <a class="nav-link" href="./login.html">Login</a>
+          </li>
+          <li class="nav-item d-none" id="nav-profile">
+            <a class="nav-link" href="./profile.html">Profile</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container product-page mt-5">
+    <div class="row g-5">
+      <!-- PRODUCT IMAGE -->
+      <div class="col-md-6">
+        <div class="product-image-wrap" id="zoomTrigger">
+          <img id="image" alt="Product image" loading="lazy" />
+        </div>
+      </div>
+
+      <!-- PRODUCT BUY BOX -->
+      <div class="col-md-6">
+        <div class="product-buybox">
+          <h1 id="name" class="product-title"></h1>
+          <div class="product-rating mb-1">
+            <span id="avgStars"></span>
+            <small id="reviewCount" class="text-muted"></small>
+          </div>
+
+          <div class="product-price">₱<span id="price"></span></div>
+          <div id="stockInfo" style="margin-top:6px;font-weight:600;"></div>
+
+
+          <p id="desc" class="product-desc"></p>
+
+          <div class="product-actions">
+            <div class="bike-select mb-3">
+              <label class="form-label">Select Motorcycle Model</label>
+              <select id="bikeModel" class="form-select">
+                <option value="">Choose model...</option>
+                <option value="Mio I 125">Mio I 125</option>
+                <option value="Aerox 155">Aerox 155</option>
+                <option value="Click 125i">Click 125i</option>
+                <option value="ADV 160">ADV 160</option>
+              </select>
+            </div>
+
+            <div class="qty-wrap">
+              <label>Quantity</label>
+              <input type="number" id="qty" value="1" min="1" />
+            </div>
+
+            <button class="btn btn-dark btn-lg w-100" onclick="add()">
+              Add to Cart
+            </button>
+
+            <div class="product-trust">
+              ✔ Secure checkout &nbsp; • &nbsp; ✔ Quality guaranteed
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container mt-5">
+
+    <h3>Customer Reviews</h3>
+
+    <div id="reviewList" class="mb-4"></div>
+
+    <div class="card p-3">
+      <h5>Write a Review</h5>
+
+      <select id="reviewRating" class="form-select mb-2">
+        <option value="5">⭐⭐⭐⭐⭐</option>
+        <option value="4">⭐⭐⭐⭐</option>
+        <option value="3">⭐⭐⭐</option>
+        <option value="2">⭐⭐</option>
+        <option value="1">⭐</option>
+      </select>
+
+      <textarea id="reviewComment" class="form-control mb-2" placeholder="Write your review"></textarea>
+      <input type="file" id="reviewImages" class="form-control mb-2" multiple accept="image/*">
+      <button class="btn btn-dark" onclick="submitReview()">
+        Submit Review
+      </button>
+    </div>
+
+  </div>
+  <!-- 🔥 STICKY ADD TO CART MOBILE -->
+  <div class="sticky-cart" id="stickyCart">
+    <div class="sticky-inner">
+
+      <div class="sticky-info">
+        <div class="sticky-price">₱<span id="stickyPrice"></span></div>
+        <small id="stickyStock"></small>
+      </div>
+
+      <button class="sticky-btn" onclick="add()">
+        Add to Cart
+      </button>
+
+    </div>
+  </div>
+  <!-- IMAGE ZOOM MODAL -->
+  <div class="image-zoom-modal" id="imageZoom">
+    <span class="zoom-close">&times;</span>
+    <img id="zoomedImage" alt="Zoomed product image" />
+  </div>
+  <footer class="footer-premium mt-5">
+    <div class="container">
+      <div class="row text-center text-md-start">
+
+        <!-- STORE INFO -->
+        <div class="col-md-3 mb-3">
+          <h5>Kickbarks Moto Shop</h5>
+          <p class="small text-secondary mb-0">
+            Thank you for trusting Kickbarks Moto Shop.<br />
+            Keep riding safe and strong.
+          </p>
+        </div>
+
+        <!-- QUICK LINKS -->
+        <div class="col-md-3 mb-3">
+          <h6>Quick Links</h6>
+          <ul class="list-unstyled">
+            <li><a href="./shop.html">Shop</a></li>
+            <li><a href="./cart.html">Cart</a></li>
+            <li><a href="./profile.html">My Account</a></li>
+          </ul>
+        </div>
+
+        <!-- PAYMENT METHODS -->
+        <div class="col-md-3 mb-3">
+          <h6>Payment Methods</h6>
+
+          <p class="small mb-1">
+            💵 Cash on Delivery (COD)
+          </p>
+
+          <p class="small mb-1">
+            🅿️ PayPal
+          </p>
+
+          <p class="small text-secondary mb-0">
+            Debit / Credit Card<br>
+            (Visa • Mastercard via PayPal)
+          </p>
+        </div>
+
+        <!-- CONTACT -->
+        <div class="col-md-3 mb-3">
+          <h6>Contact</h6>
+          <p class="small mb-1">kickbarks@gmail.com</p>
+          <p class="small">© 2026 Kickbarks Moto Shop</p>
+        </div>
+
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="./js/ui.js"></script>
+  <script src="./js/navbar.js"></script>
+  <script src="./js/product.js"></script>
+</body>
+
+</html>
