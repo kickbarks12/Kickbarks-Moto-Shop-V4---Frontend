@@ -1,5 +1,5 @@
 // js/admin/products.js
-const API = "https://kickbarks-moto-shop.onrender.com/api";
+const API = "http://localhost:4000/api";
 let currentSort = { key: null, direction: "asc" };
 
 function formatPriceRange(product) {
@@ -133,45 +133,139 @@ async function editProduct(id) {
     const res = await adminFetch(`${API}/products/${id}`);
     const p = await res.json();
 
-    const newName = prompt("Product name:", p.name);
-    if (!newName) return;
+    const modalHtml = `
+      <div class="modal fade" id="editProductModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Edit Product</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
 
-    const newDesc = prompt("Description:", p.description || "");
-    const price_mio = prompt("Price MIO:", p.price?.mio || 0);
-    const price_aerox = prompt("Price AEROX:", p.price?.aerox || 0);
-    const price_click = prompt("Price CLICK:", p.price?.click || 0);
-    const price_adv = prompt("Price ADV:", p.price?.adv || 0);
+            <form id="editProductForm" enctype="multipart/form-data">
+              <div class="modal-body">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label">Product Name</label>
+                    <input name="name" class="form-control" value="${p.name || ""}" required>
+                  </div>
 
-    const stock_mio = prompt("Stock MIO:", p.stock?.mio || 0);
-    const stock_aerox = prompt("Stock AEROX:", p.stock?.aerox || 0);
-    const stock_click = prompt("Stock CLICK:", p.stock?.click || 0);
-    const stock_adv = prompt("Stock ADV:", p.stock?.adv || 0);
+                  <div class="col-md-6">
+                    <label class="form-label">Category</label>
+                    <input name="category" class="form-control" value="${p.category || ""}" required>
+                  </div>
 
-    const formData = new FormData();
-    formData.append("name", newName);
-    formData.append("description", newDesc);
-    formData.append("price_mio", price_mio);
-    formData.append("price_aerox", price_aerox);
-    formData.append("price_click", price_click);
-    formData.append("price_adv", price_adv);
-    formData.append("stock_mio", stock_mio);
-    formData.append("stock_aerox", stock_aerox);
-    formData.append("stock_click", stock_click);
-    formData.append("stock_adv", stock_adv);
+                  <div class="col-md-3">
+                    <label class="form-label">Mio Price</label>
+                    <input name="price_mio" type="number" class="form-control" value="${p.price?.mio || 0}" required>
+                  </div>
 
-    const update = await adminFetch(`${API}/products/${id}`, {
-      method: "PUT",
-      body: formData
+                  <div class="col-md-3">
+                    <label class="form-label">Aerox Price</label>
+                    <input name="price_aerox" type="number" class="form-control" value="${p.price?.aerox || 0}" required>
+                  </div>
+
+                  <div class="col-md-3">
+                    <label class="form-label">Click Price</label>
+                    <input name="price_click" type="number" class="form-control" value="${p.price?.click || 0}" required>
+                  </div>
+
+                  <div class="col-md-3">
+                    <label class="form-label">ADV Price</label>
+                    <input name="price_adv" type="number" class="form-control" value="${p.price?.adv || 0}" required>
+                  </div>
+
+                  <div class="col-md-3">
+                    <label class="form-label">Mio Stock</label>
+                    <input name="stock_mio" type="number" class="form-control" value="${p.stock?.mio || 0}" required>
+                  </div>
+
+                  <div class="col-md-3">
+                    <label class="form-label">Aerox Stock</label>
+                    <input name="stock_aerox" type="number" class="form-control" value="${p.stock?.aerox || 0}" required>
+                  </div>
+
+                  <div class="col-md-3">
+                    <label class="form-label">Click Stock</label>
+                    <input name="stock_click" type="number" class="form-control" value="${p.stock?.click || 0}" required>
+                  </div>
+
+                  <div class="col-md-3">
+                    <label class="form-label">ADV Stock</label>
+                    <input name="stock_adv" type="number" class="form-control" value="${p.stock?.adv || 0}" required>
+                  </div>
+
+                  <div class="col-12">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-control" rows="3">${p.description || ""}</textarea>
+                  </div>
+
+                  <div class="col-12">
+                    <label class="form-label">Current Images</label>
+                    <div class="d-flex flex-wrap gap-2 mb-2">
+                      ${(p.images && p.images.length)
+                        ? p.images.map(img => `
+                          <img src="${img}"
+                               style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid #ddd"
+                               onerror="this.src='https://via.placeholder.com/80?text=No+Image'">
+                        `).join("")
+                        : `<span class="text-muted">No images</span>`
+                      }
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <label class="form-label">Upload New Images</label>
+                    <input id="editImages" name="images" type="file" multiple accept="image/*" class="form-control">
+                    <small class="text-muted">Uploading new images will replace the current images.</small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-dark">Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const existingModal = document.getElementById("editProductModal");
+    if (existingModal) existingModal.remove();
+
+    document.body.insertAdjacentHTML("beforeend", modalHtml);
+
+    const modalEl = document.getElementById("editProductModal");
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
+
+    document.getElementById("editProductForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(e.target);
+
+      const update = await adminFetch(`${API}/products/${id}`, {
+        method: "PUT",
+        body: formData
+      });
+
+      const result = await update.json();
+
+      if (result.success) {
+        showToast("Product updated");
+        modal.hide();
+        loadProducts();
+      } else {
+        showToast(result.error || "Update failed");
+      }
     });
 
-    const result = await update.json();
+    modalEl.addEventListener("hidden.bs.modal", () => {
+      modalEl.remove();
+    });
 
-    if (result.success) {
-      showToast("Product updated");
-      loadProducts();
-    } else {
-      showToast(result.error || "Update failed");
-    }
   } catch (err) {
     console.error(err);
     showToast("Failed to update product");

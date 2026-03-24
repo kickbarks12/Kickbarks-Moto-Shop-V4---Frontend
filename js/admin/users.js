@@ -1,5 +1,5 @@
 // js/admin/users.js
-const API = "https://kickbarks-moto-shop.onrender.com/api";
+const API = "http://localhost:4000/api";
 
 async function loadUsers() {
   const table = document.getElementById("usersTable");

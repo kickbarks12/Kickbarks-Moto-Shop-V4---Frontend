@@ -49,7 +49,7 @@ function signup(e) {
     })
     .then(() => {
       showToast("Account created successfully!");
-      window.location.href = "/frontend/login.html";
+      window.location.href = "/login.html";
     })
     .catch(err => {
       console.error(err);
@@ -115,7 +115,7 @@ function login(e) {
         window.updateCartCount();
       }
 
-      window.location.href = "/frontend/index.html";
+      window.location.href = "/index.html";
     })
     .catch(err => {
       console.error(err);

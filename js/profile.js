@@ -446,20 +446,31 @@ function renderProfile(user) {
   const avatar = document.getElementById("profileAvatar");
   const initials = document.getElementById("profileInitial");
 
-  if (user.avatar && avatar && initials) {
-    avatar.src = user.avatar;
-    avatar.style.display = "block";
-    initials.style.display = "none";
-  } else if (initials) {
-    const letters = (user.name || "U")
-      .split(" ")
-      .map(n => n[0])
-      .join("")
-      .toUpperCase();
+  if (!avatar || !initials) return;
 
-    initials.textContent = letters;
+  const letters = (user.name || "U")
+    .split(" ")
+    .map(n => n[0])
+    .join("")
+    .toUpperCase();
+
+  initials.textContent = letters;
+
+  if (user.avatar) {
+    avatar.onload = () => {
+      avatar.style.display = "block";
+      initials.style.display = "none";
+    };
+
+    avatar.onerror = () => {
+      avatar.style.display = "none";
+      initials.style.display = "inline-flex";
+    };
+
+    avatar.src = user.avatar;
+  } else {
+    avatar.style.display = "none";
     initials.style.display = "inline-flex";
-    if (avatar) avatar.style.display = "none";
   }
 }
 

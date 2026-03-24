@@ -1,5 +1,5 @@
 // js/admin/admin.js
-const API = "https://kickbarks-moto-shop.onrender.com/api";
+const API = "http://localhost:4000/api";
 
 async function adminLogin() {
   const email = document.getElementById("email").value.trim();

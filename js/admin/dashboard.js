@@ -1,5 +1,5 @@
 // js/admin/dashboard.js
-const API = "https://kickbarks-moto-shop.onrender.com/api";
+const API = "http://localhost:4000/api";
 let salesChartInstance = null;
 
 async function loadDashboard(range = "week") {
