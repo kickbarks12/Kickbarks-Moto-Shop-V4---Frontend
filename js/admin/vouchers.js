@@ -1,5 +1,5 @@
 // js/admin/vouchers.js
-const API = "http://localhost:4000/api";
+const API = "https://kickbarks-moto-shop.onrender.com/api";
 
 async function loadVouchers() {
   const table = document.getElementById("voucherTable");

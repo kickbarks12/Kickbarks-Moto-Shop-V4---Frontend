@@ -1,4 +1,4 @@
-window.API_BASE = "http://localhost:4000";
+window.API_BASE = "https://kickbarks-moto-shop.onrender.com";
 
 function showLoader() {
   document.getElementById("loader")?.classList.remove("d-none");

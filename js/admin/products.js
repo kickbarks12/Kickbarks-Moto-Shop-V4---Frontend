@@ -1,5 +1,5 @@
 // js/admin/products.js
-const API = "http://localhost:4000/api";
+const API = "https://kickbarks-moto-shop.onrender.com/api";
 let currentSort = { key: null, direction: "asc" };
 
 function formatPriceRange(product) {

@@ -1,5 +1,5 @@
 // js/admin/orders.js
-const API = "http://localhost:4000/api";
+const API = "https://kickbarks-moto-shop.onrender.com/api";
 
 function formatOrderDate(date) {
   if (!date) return "-";
