@@ -64,6 +64,7 @@ function login(e) {
   e.preventDefault();
 
   const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
   const remember = document.getElementById("rememberMe")?.checked;
 
   if (!emailInput?.value.trim() || !passwordInput?.value) {
@@ -128,10 +129,13 @@ function login(e) {
 
 document.addEventListener("DOMContentLoaded", () => {
   const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
   const rememberBox = document.getElementById("rememberMe");
 
   const savedEmail = localStorage.getItem("rememberEmail");
+  const savedPass = localStorage.getItem("rememberPass");
 
   if (emailInput && savedEmail) emailInput.value = savedEmail;
+  if (passwordInput && savedPass) passwordInput.value = savedPass;
   if (rememberBox && savedEmail && savedPass) rememberBox.checked = true;
 });
