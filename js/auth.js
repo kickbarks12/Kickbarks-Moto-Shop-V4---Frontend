@@ -133,9 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const rememberBox = document.getElementById("rememberMe");
 
   const savedEmail = localStorage.getItem("rememberEmail");
-  const savedPass = localStorage.getItem("rememberPass");
 
   if (emailInput && savedEmail) emailInput.value = savedEmail;
-  if (passwordInput && savedPass) passwordInput.value = savedPass;
   if (rememberBox && savedEmail && savedPass) rememberBox.checked = true;
 });
