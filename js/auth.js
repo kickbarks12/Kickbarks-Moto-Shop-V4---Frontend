@@ -97,17 +97,18 @@ function login(e) {
     .then(() => {
       if (remember) {
         localStorage.setItem("rememberEmail", emailInput.value.trim());
-        localStorage.setItem("rememberPass", passwordInput.value);
       } else {
         localStorage.removeItem("rememberEmail");
-        localStorage.removeItem("rememberPass");
       }
 
       return fetch(`${window.API_BASE}/api/cart`, {
         credentials: "include"
       });
     })
-    .then(res => res.json())
+    .then(async res => {
+  const data = await res.json().catch(() => ({}));
+  return data;
+})
     .then(cart => {
       localStorage.setItem("cart", JSON.stringify(cart || []));
 
