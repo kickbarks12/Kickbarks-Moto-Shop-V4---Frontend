@@ -1,11 +1,13 @@
 let refundModal = null;
 let currentPage = 1;
 let currentSearch = "";
+let editProfileModal = null;
 
 document.addEventListener("DOMContentLoaded", initProfile);
 
 function initProfile() {
   initRefundModal();
+  initEditProfileModal();
   checkAuthAndLoadProfile();
 
   const searchInput = document.getElementById("orderSearch");
@@ -433,6 +435,7 @@ function renderProfile(user) {
   const emailEl = document.getElementById("profileEmail");
   const mobileEl = document.getElementById("profileMobile");
   const birthdayEl = document.getElementById("profileBirthday");
+  const addressEl = document.getElementById("profileAddress");
 
   if (nameEl) nameEl.innerText = user.name || "—";
   if (emailEl) emailEl.innerText = user.email || "—";
@@ -442,7 +445,7 @@ function renderProfile(user) {
       ? new Date(user.birthday).toLocaleDateString()
       : "—";
   }
-
+if (addressEl) addressEl.innerText = user.address || "—";
   const avatar = document.getElementById("profileAvatar");
   const initials = document.getElementById("profileInitial");
 
@@ -542,9 +545,35 @@ async function uploadAvatar() {
     showToast(err.message || "Failed to upload avatar", "error");
   }
 }
-async function updateProfile() {
-  const email = document.getElementById("profileEmail").value.trim();
-  const mobile = document.getElementById("profileMobile").value.trim();
+function initEditProfileModal() {
+  const modalEl = document.getElementById("editProfileModal");
+
+  if (!modalEl || !window.bootstrap?.Modal) return;
+
+  editProfileModal = new bootstrap.Modal(modalEl);
+}
+function openEditProfileModal() {
+  document.getElementById("editProfileEmail").value =
+    document.getElementById("profileEmail").innerText === "—"
+      ? ""
+      : document.getElementById("profileEmail").innerText;
+
+  document.getElementById("editProfileMobile").value =
+    document.getElementById("profileMobile").innerText === "—"
+      ? ""
+      : document.getElementById("profileMobile").innerText;
+
+  document.getElementById("editProfileAddress").value =
+    document.getElementById("profileAddress").innerText === "—"
+      ? ""
+      : document.getElementById("profileAddress").innerText;
+
+  editProfileModal.show();
+}
+async function saveProfileChanges() {
+  const email = document.getElementById("editProfileEmail").value.trim();
+  const mobile = document.getElementById("editProfileMobile").value.trim();
+  const address = document.getElementById("editProfileAddress").value.trim();
 
   try {
     const res = await fetch(`${window.API_BASE}/api/users/update-profile`, {
@@ -553,7 +582,7 @@ async function updateProfile() {
         "Content-Type": "application/json"
       },
       credentials: "include",
-      body: JSON.stringify({ email, mobile })
+      body: JSON.stringify({ email, mobile, address })
     });
 
     const data = await res.json();
@@ -563,15 +592,15 @@ async function updateProfile() {
       return;
     }
 
-    showToast("Profile updated successfully");
+    showToast("Profile updated");
+    editProfileModal.hide();
+    checkAuthAndLoadProfile();
 
   } catch (err) {
     console.error(err);
     showToast("Something went wrong", "error");
   }
 }
-
-
 
 window.logout = logout;
 window.addWishlistToCart = addWishlistToCart;
@@ -582,4 +611,5 @@ window.openRefundModal = openRefundModal;
 window.submitRefund = submitRefund;
 window.copyVoucher = copyVoucher;
 window.uploadAvatar = uploadAvatar;
-window.updateProfile = updateProfile;
+window.openEditProfileModal = openEditProfileModal;
+window.saveProfileChanges = saveProfileChanges;

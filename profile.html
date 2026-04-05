@@ -107,27 +107,23 @@
         <div class="col-lg-4">
           <!-- PROFILE INFO -->
           <div class="card p-3 mb-4">
-            <h5 class="fw-bold mb-3">Profile Information</h5>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="fw-bold mb-0">Profile Information</h5>
+              <button
+                class="btn btn-sm btn-outline-primary"
+                onclick="openEditProfileModal()"
+              >
+                Edit
+              </button>
+            </div>
 
             <p><strong>Name:</strong> <span id="profileName">—</span></p>
-            <div class="mb-2">
-              <label><strong>Email:</strong></label>
-              <input type="email" id="profileEmail" class="form-control" />
-            </div>
-
-            <div class="mb-2">
-              <label><strong>Mobile:</strong></label>
-              <input type="text" id="profileMobile" class="form-control" />
-            </div>
+            <p><strong>Email:</strong> <span id="profileEmail">—</span></p>
+            <p><strong>Mobile:</strong> <span id="profileMobile">—</span></p>
+            <p><strong>Address:</strong> <span id="profileAddress">—</span></p>
             <p>
               <strong>Birthday:</strong> <span id="profileBirthday">—</span>
             </p>
-            <button
-              class="btn btn-primary mt-2 w-100"
-              onclick="updateProfile()"
-            >
-              Save Changes
-            </button>
 
             <h5 class="mt-3">Available Vouchers</h5>
             <ul id="voucherList">
@@ -206,6 +202,50 @@
             </button>
             <button class="btn btn-warning" onclick="submitRefund()">
               Submit Refund
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="editProfileModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit Profile</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+
+          <div class="modal-body">
+            <div class="mb-3">
+              <label>Email</label>
+              <input type="email" id="editProfileEmail" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+              <label>Mobile</label>
+              <input type="text" id="editProfileMobile" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+              <label>Home Address</label>
+              <textarea
+                id="editProfileAddress"
+                class="form-control"
+                rows="3"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">
+              Cancel
+            </button>
+            <button class="btn btn-primary" onclick="saveProfileChanges()">
+              Save
             </button>
           </div>
         </div>
