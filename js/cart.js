@@ -18,7 +18,7 @@ function syncCartToServer(cartItems) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
-    body: JSON.stringify({ items: cartItems })
+    body: JSON.stringify({ cart: cartItems })
   }).catch(err => console.error("Cart sync failed", err));
 }
 
