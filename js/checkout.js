@@ -25,7 +25,25 @@ const placeOrderBtnMobile = document.getElementById("placeOrderBtnMobile");
 const codOption = document.getElementById("codOption");
 const paypalOption = document.getElementById("paypalOption");
 const paypalContainer = document.getElementById("paypal-button-container");
+async function loadUserProfileToCheckout() {
+  try {
+    const res = await fetch(`${window.API_BASE}/api/users/me`, {
+      credentials: "include"
+    });
 
+    if (!res.ok) return;
+
+    const user = await res.json();
+
+    if (nameInput) nameInput.value = user.name || "";
+    if (emailInput) emailInput.value = user.email || "";
+    if (phoneInput) phoneInput.value = user.mobile || "";
+    if (addressInput) addressInput.value = user.address || "";
+
+  } catch (err) {
+    console.error("Failed to load user profile:", err);
+  }
+}
 function calculateSubtotal() {
   return cart.reduce((sum, item) => {
     const price = Number(item.price) || 0;
@@ -249,6 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initFormValidation();
   initPaymentToggle();
   initPayPal();
+  loadUserProfileToCheckout();
 });
 
 window.placeOrder = placeOrder;
