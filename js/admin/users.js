@@ -17,7 +17,7 @@ async function loadUsers() {
     if (!users.length) {
       table.innerHTML = `
         <tr>
-          <td colspan="5" style="text-align:center">
+          <td colspan="6" style="text-align:center">
             No registered users
           </td>
         </tr>
@@ -37,6 +37,7 @@ async function loadUsers() {
         </td>
         <td>${u.email}</td>
         <td>${u.mobile || "-"}</td>
+        <td>${u.address || "-"}</td>
         <td>${u.birthday ? new Date(u.birthday).toLocaleDateString() : "-"}</td>
         <td>${new Date(u.createdAt).toLocaleDateString()}</td>
       </tr>
