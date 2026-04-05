@@ -567,14 +567,22 @@ function openEditProfileModal() {
     document.getElementById("profileAddress").innerText === "—"
       ? ""
       : document.getElementById("profileAddress").innerText;
+const birthdayValue = document.getElementById("profileBirthday").innerText;
 
+if (birthdayValue && birthdayValue !== "—") {
+  const date = new Date(birthdayValue);
+  const formatted = date.toISOString().split("T")[0];
+  document.getElementById("editProfileBirthday").value = formatted;
+} else {
+  document.getElementById("editProfileBirthday").value = "";
+}
   editProfileModal.show();
 }
 async function saveProfileChanges() {
   const email = document.getElementById("editProfileEmail").value.trim();
   const mobile = document.getElementById("editProfileMobile").value.trim();
   const address = document.getElementById("editProfileAddress").value.trim();
-
+const birthday = document.getElementById("editProfileBirthday").value;
   try {
     const res = await fetch(`${window.API_BASE}/api/users/update-profile`, {
       method: "PUT",
@@ -582,7 +590,7 @@ async function saveProfileChanges() {
         "Content-Type": "application/json"
       },
       credentials: "include",
-      body: JSON.stringify({ email, mobile, address })
+      body: JSON.stringify({ email, mobile, address, birthday })
     });
 
     const data = await res.json();
