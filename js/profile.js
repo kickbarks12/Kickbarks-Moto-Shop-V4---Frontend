@@ -542,6 +542,36 @@ async function uploadAvatar() {
     showToast(err.message || "Failed to upload avatar", "error");
   }
 }
+async function updateProfile() {
+  const email = document.getElementById("profileEmail").value.trim();
+  const mobile = document.getElementById("profileMobile").value.trim();
+
+  try {
+    const res = await fetch(`${window.API_BASE}/api/users/update-profile`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include",
+      body: JSON.stringify({ email, mobile })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      showToast(data.error || "Update failed", "error");
+      return;
+    }
+
+    showToast("Profile updated successfully");
+
+  } catch (err) {
+    console.error(err);
+    showToast("Something went wrong", "error");
+  }
+}
+
+
 
 window.logout = logout;
 window.addWishlistToCart = addWishlistToCart;
@@ -552,3 +582,4 @@ window.openRefundModal = openRefundModal;
 window.submitRefund = submitRefund;
 window.copyVoucher = copyVoucher;
 window.uploadAvatar = uploadAvatar;
+window.updateProfile = updateProfile;
