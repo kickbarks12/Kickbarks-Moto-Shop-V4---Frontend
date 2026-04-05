@@ -23,6 +23,8 @@ function syncCartToServer(cartItems) {
 }
 
 async function loadCart() {
+  const localCart = JSON.parse(localStorage.getItem("cart")) || [];
+
   try {
     const res = await fetch(`${window.API_BASE}/api/cart`, {
       credentials: "include"
@@ -33,11 +35,17 @@ async function loadCart() {
     }
 
     const data = await res.json();
-    cart = Array.isArray(data) ? data : [];
-    localStorage.setItem("cart", JSON.stringify(cart));
+    const serverCart = Array.isArray(data) ? data : [];
+
+    if (serverCart.length > 0) {
+      cart = serverCart;
+      localStorage.setItem("cart", JSON.stringify(serverCart));
+    } else {
+      cart = localCart;
+    }
   } catch (err) {
     console.warn("Using local cart fallback:", err);
-    cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart = localCart;
   }
 
   restoreVoucher();
