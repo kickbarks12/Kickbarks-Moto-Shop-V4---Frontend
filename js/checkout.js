@@ -68,12 +68,30 @@ function renderCheckoutItems() {
     const lineTotal = price * qty;
 
     return `
-      <li class="list-group-item">
+  <li class="list-group-item">
+    <div class="d-flex align-items-start gap-3">
+      <div>
+        <img
+          src="${
+            item.image
+              ? (item.image.startsWith("http")
+                  ? item.image
+                  : (window.API_BASE || "") + item.image)
+              : "/images/placeholder.png"
+          }"
+          alt="${item.name || "Product"}"
+          style="width:80px; height:80px; object-fit:cover; border-radius:8px;"
+        >
+      </div>
+
+      <div>
         <div style="font-weight:600">${item.name || ""}</div>
         ${item.bike ? `<div style="font-size:13px;color:#777">Bike: ${item.bike}</div>` : ""}
         <div>${qty} × ₱${price.toLocaleString("en-PH")} = ₱${lineTotal.toLocaleString("en-PH")}</div>
-      </li>
-    `;
+      </div>
+    </div>
+  </li>
+`;
   }).join("");
 }
 
