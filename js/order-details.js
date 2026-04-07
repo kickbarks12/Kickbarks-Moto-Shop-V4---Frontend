@@ -53,32 +53,43 @@ function renderOrder(order) {
   }
 
   orderItems.forEach(item => {
-    const productName =
-      item.name ||
-      item.productName ||
-      item.product?.name ||
-      item.product?.title ||
-      "No product name";
+const productName =
+  item.name ||
+  item.productName ||
+  item.product?.name ||
+  item.product?.title ||
+  "No product name";
 
-    const quantity =
-      item.qty ||
-      item.quantity ||
-      item.count ||
-      1;
+const quantity =
+  item.qty ||
+  item.quantity ||
+  item.count ||
+  1;
 
-    const price =
-      item.price ||
-      item.product?.price ||
-      item.amount ||
-      0;
+const price =
+  item.price ||
+  item.product?.price ||
+  item.amount ||
+  0;
 
-    items.insertAdjacentHTML("beforeend", `
+let imageSrc =
+  item.image ||
+  item.product?.image ||
+  item.product?.images?.[0] ||
+  "";
+
+if (imageSrc && !imageSrc.startsWith("http")) {
+  imageSrc = `${window.API_BASE || ""}${imageSrc}`;
+}
+
+items.insertAdjacentHTML("beforeend", `
   <tr>
     <td>
-      <img 
-        src="${item.image || item.product?.image || item.product?.images?.[0] || '/images/no-image.png'}" 
+      <img
+        src="${imageSrc || '/images/no-image.png'}"
         alt="${productName}"
         style="width:60px; height:60px; object-fit:cover; border-radius:6px;"
+        onerror="this.src='/images/no-image.png'"
       >
     </td>
     <td>${productName}</td>
