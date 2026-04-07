@@ -83,7 +83,7 @@ if (imageSrc) {
     imageSrc = `${window.API_BASE || ""}${imageSrc}`;
   }
 } else {
-  imageSrc = "./images/placeholder.png";
+  imageSrc = "";
 }
 
 items.insertAdjacentHTML("beforeend", `
