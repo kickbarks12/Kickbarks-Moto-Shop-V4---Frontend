@@ -88,11 +88,16 @@ items.insertAdjacentHTML("beforeend", `
       ${
         imageSrc
           ? `<img
-               src="${image}"
-               alt="${productName}"
-               style="width:60px; height:60px; object-fit:cover; border-radius:6px;"
-               onerror="this.style.display='none'; this.parentElement.innerHTML='No image';"
-             >`
+          src="${
+            item.image
+              ? (item.image.startsWith("http")
+                  ? item.image
+                  : (window.API_BASE || "") + item.image)
+              : "/images/placeholder.png"
+          }"
+          alt="${item.name || "Product"}"
+          style="width:80px; height:80px; object-fit:cover; border-radius:8px;"
+        >`
           : `<span class="text-muted">No image</span>`
       }
     </td>
