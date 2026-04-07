@@ -88,7 +88,7 @@ items.insertAdjacentHTML("beforeend", `
       ${
         imageSrc
           ? `<img
-               src="${imageSrc}"
+               src="${image}"
                alt="${productName}"
                style="width:60px; height:60px; object-fit:cover; border-radius:6px;"
                onerror="this.style.display='none'; this.parentElement.innerHTML='No image';"
