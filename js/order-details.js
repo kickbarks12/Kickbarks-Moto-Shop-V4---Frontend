@@ -46,7 +46,7 @@ function renderOrder(order) {
   if (!orderItems.length) {
     items.innerHTML = `
       <tr>
-        <td colspan="3" class="text-center text-muted">No products found in this order</td>
+        <td colspan="4" class="text-center text-muted">No products found in this order</td>
       </tr>
     `;
     return;
@@ -73,11 +73,18 @@ function renderOrder(order) {
       0;
 
     items.insertAdjacentHTML("beforeend", `
-      <tr>
-        <td>${productName}</td>
-        <td>${quantity}</td>
-        <td>₱${Number(price).toLocaleString("en-PH")}</td>
-      </tr>
-    `);
+  <tr>
+    <td>
+      <img 
+        src="${item.image || item.product?.image || item.product?.images?.[0] || '/images/no-image.png'}" 
+        alt="${productName}"
+        style="width:60px; height:60px; object-fit:cover; border-radius:6px;"
+      >
+    </td>
+    <td>${productName}</td>
+    <td>${quantity}</td>
+    <td>₱${Number(price).toLocaleString("en-PH")}</td>
+  </tr>
+`);
   });
 }
