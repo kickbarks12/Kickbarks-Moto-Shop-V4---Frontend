@@ -78,28 +78,23 @@ let imageSrc =
   item.product?.images?.[0] ||
   "";
 
-if (imageSrc && !imageSrc.startsWith("http")) {
-  imageSrc = `${window.API_BASE || ""}${imageSrc}`;
+if (imageSrc) {
+  if (!imageSrc.startsWith("http")) {
+    imageSrc = `${window.API_BASE || ""}${imageSrc}`;
+  }
+} else {
+  imageSrc = "./images/placeholder.png";
 }
 
 items.insertAdjacentHTML("beforeend", `
   <tr>
     <td>
-      ${
-        imageSrc
-          ? `<img
-          src="${
-            item.image
-              ? (item.image.startsWith("http")
-                  ? item.image
-                  : (window.API_BASE || "") + item.image)
-              : "/images/placeholder.png"
-          }"
-          alt="${item.name || "Product"}"
-          style="width:80px; height:80px; object-fit:cover; border-radius:8px;"
-        >`
-          : `<span class="text-muted">No image</span>`
-      }
+      <img
+        src="${imageSrc}"
+        alt="${productName}"
+        style="width:80px; height:80px; object-fit:cover; border-radius:8px;"
+        onerror="this.onerror=null; this.src='./images/placeholder.png';"
+      >
     </td>
     <td>${productName}</td>
     <td>${quantity}</td>
