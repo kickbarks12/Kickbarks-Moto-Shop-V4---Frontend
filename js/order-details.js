@@ -72,29 +72,26 @@ const price =
   item.amount ||
   0;
 
-let imageSrc =
+const imageSrc =
   item.image ||
+  item.images?.[0] ||
   item.product?.image ||
   item.product?.images?.[0] ||
   "";
 
-if (imageSrc) {
-  if (!imageSrc.startsWith("http")) {
-    imageSrc = `${window.API_BASE || ""}${imageSrc}`;
-  }
-} else {
-  imageSrc = "";
-}
-
 items.insertAdjacentHTML("beforeend", `
   <tr>
     <td>
-      <img
-        src="${imageSrc}"
-        alt="${productName}"
-        style="width:80px; height:80px; object-fit:cover; border-radius:8px;"
-        onerror="this.onerror=null; this.src='./images/placeholder.png';"
-      >
+      ${
+        imageSrc
+          ? `<img
+              src="${imageSrc}"
+              alt="${productName}"
+              style="width:80px; height:80px; object-fit:cover; border-radius:8px;"
+              onerror="this.outerHTML='<span class=&quot;text-muted&quot;>No image</span>';"
+            >`
+          : `<span class="text-muted">No image</span>`
+      }
     </td>
     <td>${productName}</td>
     <td>${quantity}</td>
