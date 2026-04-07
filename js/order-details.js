@@ -85,12 +85,16 @@ if (imageSrc && !imageSrc.startsWith("http")) {
 items.insertAdjacentHTML("beforeend", `
   <tr>
     <td>
-      <img
-        src="${imageSrc || '/images/no-image.png'}"
-        alt="${productName}"
-        style="width:60px; height:60px; object-fit:cover; border-radius:6px;"
-        onerror="this.src='/images/no-image.png'"
-      >
+      ${
+        imageSrc
+          ? `<img
+               src="${imageSrc}"
+               alt="${productName}"
+               style="width:60px; height:60px; object-fit:cover; border-radius:6px;"
+               onerror="this.style.display='none'; this.parentElement.innerHTML='No image';"
+             >`
+          : `<span class="text-muted">No image</span>`
+      }
     </td>
     <td>${productName}</td>
     <td>${quantity}</td>
