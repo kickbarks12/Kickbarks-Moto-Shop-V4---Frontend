@@ -85,11 +85,12 @@ items.insertAdjacentHTML("beforeend", `
       ${
         imageSrc
           ? `<img
-              src="${imageSrc}"
-              alt="${productName}"
-              style="width:80px; height:80px; object-fit:cover; border-radius:8px;"
-              onerror="this.outerHTML='<span class=&quot;text-muted&quot;>No image</span>';"
-            >`
+  src="${imageSrc}"
+  alt="${productName}"
+  onclick="openImageModal('${imageSrc}')"
+  style="width:80px; height:80px; object-fit:cover; border-radius:8px; cursor:pointer;"
+  onerror="this.outerHTML='<span class=&quot;text-muted&quot;>No image</span>';"
+>`
           : `<span class="text-muted">No image</span>`
       }
     </td>
@@ -100,3 +101,14 @@ items.insertAdjacentHTML("beforeend", `
 `);
   });
 }
+function openImageModal(src) {
+  const modal = document.getElementById("imageModal");
+  const img = document.getElementById("modalImg");
+
+  img.src = src;
+  modal.style.display = "flex";
+}
+
+document.getElementById("imageModal")?.addEventListener("click", function () {
+  this.style.display = "none";
+});
