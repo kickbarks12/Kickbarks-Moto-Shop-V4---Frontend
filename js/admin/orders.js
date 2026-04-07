@@ -62,49 +62,48 @@ async function loadAdminOrders() {
     }
 
     table.innerHTML = orders.map(o => {
-      const itemsHtml = (o.items || []).map(i => `
-        <div style="margin-bottom:6px">
-          <div style="font-weight:600">${i.name} × ${i.qty}</div>
-          ${i.bike ? `<div style="font-size:12px;color:#777">Bike: ${i.bike}</div>` : ""}
-        </div>
-      `).join("");
-
       return `
-        <tr>
-          <td>
-            ${o.orderNumber}<br>
-            <small style="color:#888">${formatOrderDate(o.date)}</small>
-          </td>
-          <td>${o.customerName}</td>
-          <td style="min-width:180px">${itemsHtml}</td>
-          <td>₱${(o.total || 0).toLocaleString()}</td>
-          <td>
-            <span class="badge ${
-              o.paymentMethod === "PAYPAL" ? "bg-primary" : "bg-warning text-dark"
-            }">
-              ${o.paymentMethod || "COD"}
-            </span>
-          </td>
-          <td>
-            <span class="status ${String(o.status || "").toLowerCase()}">
-              ${o.status || "-"}
-            </span>
-          </td>
-          <td>
-            <select
-              onchange="updateOrderStatus('${o._id}', this.value)"
-              style="padding:6px 10px;border-radius:8px;border:1px solid #ddd;font-weight:600;cursor:pointer;"
-            >
-              <option value="Pending" ${o.status==="Pending"?"selected":""}>Pending</option>
-              <option value="Preparing" ${o.status==="Preparing"?"selected":""}>Preparing</option>
-              <option value="Ship out" ${o.status==="Ship out"?"selected":""}>Ship out</option>
-              <option value="Out for delivery" ${o.status==="Out for delivery"?"selected":""}>Out for delivery</option>
-              <option value="Delivered" ${o.status==="Delivered"?"selected":""}>Delivered</option>
-              <option value="Cancelled" ${o.status==="Cancelled"?"selected":""}>Cancelled</option>
-            </select>
-          </td>
-        </tr>
-      `;
+  <tr>
+    <td>
+      <a
+        href="/order-details.html?id=${o._id}"
+        style="font-weight:600; text-decoration:none; color:inherit;"
+      >
+        ${o.orderNumber}
+      </a><br>
+      <small style="color:#888">${formatOrderDate(o.date)}</small>
+    </td>
+    <td>${o.customerName}</td>
+    <td>₱${(o.total || 0).toLocaleString()}</td>
+    <td>
+      <span class="badge ${
+        String(o.paymentMethod || "COD").toUpperCase() === "PAYPAL"
+          ? "bg-primary"
+          : "bg-warning text-dark"
+      }">
+        ${o.paymentMethod || "COD"}
+      </span>
+    </td>
+    <td>
+      <span class="status ${String(o.status || "").toLowerCase()}">
+        ${o.status || "-"}
+      </span>
+    </td>
+    <td>
+      <select
+        onchange="updateOrderStatus('${o._id}', this.value)"
+        style="padding:6px 10px;border-radius:8px;border:1px solid #ddd;font-weight:600;cursor:pointer;"
+      >
+        <option value="Pending" ${o.status==="Pending"?"selected":""}>Pending</option>
+        <option value="Preparing" ${o.status==="Preparing"?"selected":""}>Preparing</option>
+        <option value="Ship out" ${o.status==="Ship out"?"selected":""}>Ship out</option>
+        <option value="Out for delivery" ${o.status==="Out for delivery"?"selected":""}>Out for delivery</option>
+        <option value="Delivered" ${o.status==="Delivered"?"selected":""}>Delivered</option>
+        <option value="Cancelled" ${o.status==="Cancelled"?"selected":""}>Cancelled</option>
+      </select>
+    </td>
+  </tr>
+`;
     }).join("");
   } catch (err) {
     console.error(err);
