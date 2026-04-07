@@ -279,7 +279,11 @@ function renderOrders(orders = []) {
       <li class="list-group-item">
         <div class="d-flex justify-content-between align-items-start">
           <div>
-            <strong>Order #${order.orderNumber}</strong><br>
+            <strong>
+  <a href="/order-details.html?id=${order._id}" style="text-decoration:none; color:inherit;">
+    Order #${order.orderNumber}
+  </a>
+</strong><br>
             <small style="color:#666;">${formatOrderDate(order.createdAt)}</small><br>
             <small>Total: ₱${Number(order.total || 0).toLocaleString("en-PH")}</small>
 
