@@ -19,6 +19,7 @@ async function loadOrderDetails() {
     }
 
     const order = await res.json();
+    console.log("ORDER DETAILS:", order);
 
     renderOrder(order);
 
@@ -32,22 +33,50 @@ function renderOrder(order) {
   const info = document.getElementById("orderInfo");
   const items = document.getElementById("orderItems");
 
-  // Top info
   info.innerHTML = `
-    <p><strong>Order #:</strong> ${order.orderNumber}</p>
-    <p><strong>Date:</strong> ${new Date(order.createdAt).toLocaleString()}</p>
-    <p><strong>Total:</strong> ₱${order.total}</p>
+    <p><strong>Order #:</strong> ${order.orderNumber || "-"}</p>
+    <p><strong>Date:</strong> ${order.createdAt ? new Date(order.createdAt).toLocaleString() : "-"}</p>
+    <p><strong>Total:</strong> ₱${Number(order.total || 0).toLocaleString("en-PH")}</p>
   `;
 
-  // Items
   items.innerHTML = "";
 
-  order.items.forEach(item => {
+  const orderItems = Array.isArray(order.items) ? order.items : [];
+
+  if (!orderItems.length) {
+    items.innerHTML = `
+      <tr>
+        <td colspan="3" class="text-center text-muted">No products found in this order</td>
+      </tr>
+    `;
+    return;
+  }
+
+  orderItems.forEach(item => {
+    const productName =
+      item.name ||
+      item.productName ||
+      item.product?.name ||
+      item.product?.title ||
+      "No product name";
+
+    const quantity =
+      item.qty ||
+      item.quantity ||
+      item.count ||
+      1;
+
+    const price =
+      item.price ||
+      item.product?.price ||
+      item.amount ||
+      0;
+
     items.insertAdjacentHTML("beforeend", `
       <tr>
-        <td>${item.name}</td>
-        <td>${item.qty}</td>
-        <td>₱${item.price}</td>
+        <td>${productName}</td>
+        <td>${quantity}</td>
+        <td>₱${Number(price).toLocaleString("en-PH")}</td>
       </tr>
     `);
   });
