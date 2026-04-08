@@ -1797,3 +1797,38 @@ border-left:4px solid #22c55e;
   background: #fff;
   border-radius: 50%;
 }
+/* ===== MOBILE PRODUCT GRID FIX ===== */
+@media (max-width: 576px) {
+  #productList .col-6 {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  .product-card {
+    padding: 10px;
+  }
+
+  .product-title {
+    font-size: 13px;
+    min-height: 36px;
+  }
+
+  .price {
+    font-size: 14px;
+  }
+
+  .add-to-cart {
+    font-size: 13px;
+    padding: 10px;
+  }
+}
+@media (max-width: 768px) {
+  .shop-sidebar {
+    padding: 15px;
+  }
+
+  .category-btn {
+    font-size: 14px;
+    padding: 6px 10px;
+  }
+}
