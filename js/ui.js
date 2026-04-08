@@ -49,3 +49,28 @@ window.showToast = function (message, type = "success", duration = 2000) {
     toast.classList.remove("show");
   }, duration);
 };
+window.__kbCache = new Map();
+
+window.fetchJSONCached = async function (url, options = {}, ttl = 30000) {
+  const key = `${url}:${JSON.stringify(options)}`;
+  const now = Date.now();
+
+  const cached = window.__kbCache.get(key);
+  if (cached && now - cached.time < ttl) {
+    return cached.data;
+  }
+
+  const res = await fetch(url, options);
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Request failed");
+  }
+
+  window.__kbCache.set(key, {
+    time: now,
+    data
+  });
+
+  return data;
+};

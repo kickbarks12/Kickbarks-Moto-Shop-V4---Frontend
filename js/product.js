@@ -4,13 +4,26 @@ let currentStock = 0;
 
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
+function setProductLoadingState(loading) {
+  const name = document.getElementById("name");
+  const desc = document.getElementById("desc");
+  const price = document.getElementById("price");
+
+  if (loading) {
+    if (name) name.innerText = "Loading product...";
+    if (desc) desc.innerText = "Please wait while product details load.";
+    if (price) price.innerText = "...";
+  }
+}
 
 async function checkLoginStatus() {
   try {
-    const res = await fetch(`${window.API_BASE}/api/users/me`, {
-      credentials: "include"
-    });
-    isUserLoggedIn = res.ok;
+    const data = await window.fetchJSONCached(
+      `${window.API_BASE}/api/users/me`,
+      { credentials: "include" },
+      15000
+    );
+    isUserLoggedIn = !!data;
   } catch {
     isUserLoggedIn = false;
   }
@@ -129,16 +142,16 @@ async function loadProduct() {
   }
 
   try {
-    const res = await fetch(`${window.API_BASE}/api/products/${id}`);
-    const data = await res.json();
+    setProductLoadingState(true);
 
-    if (!res.ok) {
-      throw new Error(data.error || "Failed to load product");
-    }
+    const data = await window.fetchJSONCached(
+      `${window.API_BASE}/api/products/${id}`,
+      {},
+      30000
+    );
 
     renderProduct(data);
-    await loadRatingSummary();
-    await loadReviews();
+    await Promise.all([loadRatingSummary(), loadReviews()]);
   } catch (err) {
     console.error(err);
     showToast(err.message || "Failed to load product", "error");
@@ -263,7 +276,9 @@ function initImageZoom() {
 }
 
 function initStickyCart() {
-  window.addEventListener("scroll", () => {
+  let ticking = false;
+
+  function updateSticky() {
     const sticky = document.getElementById("stickyCart");
     if (!sticky) return;
 
@@ -272,7 +287,19 @@ function initStickyCart() {
     } else {
       sticky.classList.remove("show");
     }
+  }
+
+  window.addEventListener("scroll", () => {
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        updateSticky();
+        ticking = false;
+      });
+      ticking = true;
+    }
   });
+
+  updateSticky();
 }
 
 async function loadRatingSummary() {

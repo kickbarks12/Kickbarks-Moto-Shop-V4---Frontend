@@ -22,10 +22,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!container) return;
 
   try {
-    const res = await fetch(`${window.API_BASE}/api/products?featured=true`);
-    const products = await res.json();
+    const products = await window.fetchJSONCached(
+      `${window.API_BASE}/api/products?featured=true`,
+      {},
+      30000
+    );
 
-    if (!res.ok || !Array.isArray(products) || !products.length) {
+    if (!Array.isArray(products) || !products.length) {
       container.innerHTML = `
         <div class="col-12 text-center text-muted py-4">
           No featured products available.

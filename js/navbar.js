@@ -43,11 +43,13 @@ async function updateAuthNav() {
   if (!loginNav || !profileNav) return;
 
   try {
-    const res = await fetch(`${window.API_BASE}/api/users/me`, {
-      credentials: "include"
-    });
+    const data = await window.fetchJSONCached(
+      `${window.API_BASE}/api/users/me`,
+      { credentials: "include" },
+      15000
+    );
 
-    if (res.ok) {
+    if (data) {
       loginNav.classList.add("d-none");
       profileNav.classList.remove("d-none");
     } else {
@@ -67,4 +69,14 @@ document.addEventListener("DOMContentLoaded", () => {
   updateNavbarScroll();
 });
 
-window.addEventListener("scroll", updateNavbarScroll);
+let navScrollTicking = false;
+
+window.addEventListener("scroll", () => {
+  if (!navScrollTicking) {
+    window.requestAnimationFrame(() => {
+      updateNavbarScroll();
+      navScrollTicking = false;
+    });
+    navScrollTicking = true;
+  }
+});

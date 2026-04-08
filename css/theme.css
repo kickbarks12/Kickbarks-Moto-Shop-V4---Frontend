@@ -1832,3 +1832,43 @@ border-left:4px solid #22c55e;
     padding: 6px 10px;
   }
 }
+@media (max-width: 768px) {
+  .hero-premium .btn {
+    width: 100%;
+  }
+
+  .hero-premium .d-flex {
+    flex-direction: column;
+  }
+}
+@media (max-width: 768px) {
+  .product-actions .btn {
+    width: 100%;
+  }
+
+  .qty-wrap input {
+    height: 45px;
+  }
+
+  .product-buybox {
+    padding: 18px;
+  }
+}
+@media (max-width: 768px) {
+  .sticky-cart {
+    padding: 10px 14px;
+  }
+
+  .sticky-btn {
+    padding: 10px 16px;
+  }
+}
+@media (max-width: 768px) {
+  .navbar-brand span {
+    font-size: 13px;
+  }
+
+  .nav-link {
+    padding: 10px 0;
+  }
+}

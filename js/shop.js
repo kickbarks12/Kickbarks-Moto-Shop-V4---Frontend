@@ -15,10 +15,12 @@ const popupStock = document.getElementById("popupStock");
 
 async function checkLoginStatus() {
   try {
-    const res = await fetch(`${window.API_BASE}/api/users/me`, {
-      credentials: "include"
-    });
-    isUserLoggedIn = res.ok;
+    const data = await window.fetchJSONCached(
+      `${window.API_BASE}/api/users/me`,
+      { credentials: "include" },
+      15000
+    );
+    isUserLoggedIn = !!data;
   } catch {
     isUserLoggedIn = false;
   }
@@ -99,11 +101,14 @@ async function loadWishlistIds() {
 
 async function loadProducts() {
   try {
-    const res = await fetch(`${window.API_BASE}/api/products`);
-    const products = await res.json();
+    const [products, wishlist] = await Promise.all([
+      window.fetchJSONCached(`${window.API_BASE}/api/products`, {}, 30000),
+      loadWishlistIds()
+    ]);
+
     allProducts = Array.isArray(products) ? products : [];
-    applyFilters();
-    wishlistIds = await loadWishlistIds();
+    wishlistIds = Array.isArray(wishlist) ? wishlist : [];
+
     applyFilters();
   } catch (err) {
     console.error("Failed to load products:", err);
@@ -199,7 +204,7 @@ function renderProducts(products) {
     `;
   }).join("");
 
-  products.forEach(p => loadProductRating(p._id));
+  // products.forEach(p => loadProductRating(p._id));
 }
 
 function updateProductCount(count) {
@@ -456,7 +461,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   initCategoryButtons();
   initCategoryFromURL();
 
-  searchInput?.addEventListener("input", applyFilters);
+  function debounce(fn, delay = 250) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
+}
+
+const debouncedApplyFilters = debounce(applyFilters, 250);
+searchInput?.addEventListener("input", debouncedApplyFilters);
   priceFilter?.addEventListener("change", applyFilters);
   bikeSelect?.addEventListener("change", updateBikeStockUI);
   popupQty?.addEventListener("input", checkPopupQty);
