@@ -89,6 +89,8 @@ async function loadDashboard(range = "week") {
     document.getElementById("totalSales").innerText = Number(data.totalSales || 0).toLocaleString("en-PH");
     document.getElementById("totalOrders").innerText = data.totalOrders || 0;
     document.getElementById("pendingOrders").innerText = data.pendingOrders || 0;
+    document.getElementById("cancelledOrders").innerText =
+  data.cancelledOrders || 0;
     document.getElementById("totalProducts").innerText = data.totalProducts || 0;
     document.getElementById("activeVouchers").innerText = data.activeVouchers || 0;
     document.getElementById("todaySales").textContent = Number(data.todaySales || 0).toLocaleString("en-PH");
