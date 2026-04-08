@@ -607,3 +607,38 @@ body {
   font-weight:600;
   font-size:14px;
 }
+body {
+  background: #f6f8fb;
+}
+
+.card {
+  border: none;
+  border-radius: 16px;
+}
+
+.card h4 {
+  font-weight: 700;
+}
+
+.nav-link.active {
+  font-weight: 700;
+  background: #111;
+  color: #fff !important;
+  border-radius: 10px;
+}
+
+.list-group-item {
+  border-left: 0;
+  border-right: 0;
+}
+
+.chart-wrap {
+  position: relative;
+  min-height: 320px;
+}
+
+@media (max-width: 768px) {
+  .chart-wrap {
+    min-height: 260px;
+  }
+}
