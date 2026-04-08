@@ -88,6 +88,7 @@ function formatCountdown(endTime) {
 }
 
 let flashCountdownTimer = null;
+let productFlashReloading = false;
 
 function startProductFlashCountdown(endTime) {
   const timerEl = document.getElementById("flashSaleTimer");
@@ -98,7 +99,27 @@ function startProductFlashCountdown(endTime) {
   }
 
   function updateTimer() {
-    timerEl.textContent = formatCountdown(endTime);
+    const diff = new Date(endTime).getTime() - Date.now();
+
+    if (diff <= 0) {
+      timerEl.textContent = "Refreshing flash sale...";
+
+      if (!productFlashReloading) {
+        productFlashReloading = true;
+        setTimeout(() => {
+          window.location.reload();
+        }, 1200);
+      }
+
+      return;
+    }
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    timerEl.textContent =
+      `Ends in ${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
   }
 
   updateTimer();

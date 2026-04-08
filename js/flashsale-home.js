@@ -34,6 +34,7 @@ function formatCountdown(endTime) {
 }
 
 let flashTimer = null;
+let flashReloading = false;
 
 function startFlashTimer(endAt) {
   const el = document.getElementById("homeFlashSaleTimer");
@@ -42,8 +43,26 @@ function startFlashTimer(endAt) {
   if (flashTimer) clearInterval(flashTimer);
 
   function update() {
-    const t = formatCountdown(endAt);
-    el.textContent = t === "Flash Sale Ended" ? t : `Ends in ${t}`;
+    const diff = new Date(endAt).getTime() - Date.now();
+
+    if (diff <= 0) {
+      el.textContent = "Refreshing flash sale...";
+
+      if (!flashReloading) {
+        flashReloading = true;
+        setTimeout(() => {
+          window.location.reload();
+        }, 1200);
+      }
+
+      return;
+    }
+
+    const h = Math.floor(diff / (1000 * 60 * 60));
+    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+    el.textContent = `Ends in ${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
   }
 
   update();
