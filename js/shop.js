@@ -120,55 +120,84 @@ async function loadProducts() {
 function renderProducts(products) {
   if (!productList) return;
 
-  productList.innerHTML = products.map(p => `
-    <div class="col-6 col-md-4 col-lg-4">
-      <div class="product-card">
-        <button
-          class="wishlist ${Array.isArray(wishlistIds) && wishlistIds.includes(p._id) ? "active" : ""}"
-          onclick="toggleWishlist('${p._id}')"
-          title="Wishlist"
-        >
-          ♥
-        </button>
+  productList.innerHTML = products.map(p => {
+    const img = p.images?.[0]
+      ? (p.images[0].startsWith("http")
+          ? p.images[0]
+          : window.API_BASE + p.images[0])
+      : "/images/placeholder.png";
 
-        <a href="/product.html?id=${p._id}" class="product-image">
-          <img
-            src="${
-              p.images?.[0]
-                ? (p.images[0].startsWith("http")
-                    ? p.images[0]
-                    : window.API_BASE + p.images[0])
-                : "/images/placeholder.png"
-            }"
-            alt="${p.name}"
-            loading="lazy"
-          >
-        </a>
+    const isOutOfStock =
+      getMinPrice(p) === 0 ||
+      (
+        (p.stock?.mio || 0) +
+        (p.stock?.aerox || 0) +
+        (p.stock?.click || 0) +
+        (p.stock?.adv || 0)
+      ) === 0;
 
-        <div class="product-info">
-          <h3 class="product-title">
-            <a href="/product.html?id=${p._id}">
-              ${p.name}
-            </a>
-          </h3>
+    return `
+      <div class="col-6 col-md-4 col-lg-4">
+        <div class="product-card">
 
-          <div class="product-rating" id="rating-${p._id}">
-            ⭐ 0.0 (0)
-          </div>
-
-          <div class="price">${formatShopPrice(p.price)}</div>
-
+          <!-- wishlist -->
           <button
-            class="add-to-cart"
-            ${!isUserLoggedIn ? "disabled" : ""}
-            onclick='addCart(${JSON.stringify(p)})'
-          >
-            ${!isUserLoggedIn ? "Login to Add" : "Add to Cart"}
-          </button>
+            class="wishlist ${Array.isArray(wishlistIds) && wishlistIds.includes(p._id) ? "active" : ""}"
+            onclick="toggleWishlist('${p._id}')"
+          >♥</button>
+
+          <!-- image -->
+          <a href="/product.html?id=${p._id}" class="product-image">
+            <img src="${img}" alt="${p.name}" loading="lazy">
+          </a>
+
+          <div class="product-info">
+
+            <!-- name -->
+            <h3 class="product-title">
+              <a href="/product.html?id=${p._id}">
+                ${p.name}
+              </a>
+            </h3>
+
+            <!-- rating -->
+            <div class="product-rating" id="rating-${p._id}">
+              ⭐ 0.0 (0)
+            </div>
+
+            <!-- price -->
+            <div class="price fw-bold">
+              ${formatShopPrice(p.price)}
+            </div>
+            <div class="text-muted small">
+  ${p.category || "Motorcycle Part"}
+</div>
+
+            <!-- stock badge -->
+            ${isOutOfStock ? `
+              <span class="badge bg-danger mt-1">Out of Stock</span>
+            ` : ""}
+
+            <!-- button -->
+            <button
+              class="add-to-cart"
+              ${!isUserLoggedIn || isOutOfStock ? "disabled" : ""}
+              onclick='addCart(${JSON.stringify(p)})'
+            >
+              ${
+                isOutOfStock
+                  ? "Out of Stock"
+                  : !isUserLoggedIn
+                  ? "Login to Add"
+                  : "Add to Cart"
+              }
+            </button>
+
+          </div>
         </div>
       </div>
-    </div>
-  `).join("");
+    `;
+  }).join("");
 
   products.forEach(p => loadProductRating(p._id));
 }
