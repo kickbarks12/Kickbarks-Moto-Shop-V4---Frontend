@@ -66,11 +66,11 @@ async function loadAdminOrders() {
   <tr>
     <td>
       <a
-        href="/order-details.html?id=${o._id}"
-        style="font-weight:600; text-decoration:none; color:inherit;"
-      >
-        ${o.orderNumber}
-      </a><br>
+  href="/admin/order-details.html?id=${o._id}"
+  style="font-weight:600; text-decoration:none; color:inherit;"
+>
+  ${o.orderNumber}
+</a><br>
       <small style="color:#888">${formatOrderDate(o.date)}</small>
     </td>
     <td>${o.customerName}</td>
