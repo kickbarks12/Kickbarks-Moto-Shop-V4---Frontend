@@ -75,48 +75,68 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     startFlashTimer(flash[0].flashSale?.endsAt);
 
-    container.innerHTML = flash.map(p => `
-      <div class="col-12 col-sm-6 col-md-4">
-        <div class="card product-card h-100 shadow-sm position-relative">
+container.innerHTML = flash.map(p => `
+  <div class="swiper-slide">
+    <div class="card product-card h-100 shadow-sm position-relative">
 
-          <span class="badge bg-danger position-absolute top-0 start-0 m-2">
-            FLASH SALE
-          </span>
+      <span class="badge bg-danger position-absolute top-0 start-0 m-2">
+        FLASH SALE
+      </span>
 
-          <img
-            src="${
-              p.images?.[0]
-                ? (p.images[0].startsWith("http")
-                    ? p.images[0]
-                    : window.API_BASE + p.images[0])
-                : "/images/placeholder.png"
-            }"
-            class="card-img-top"
-          />
+      <img
+        src="${
+          p.images?.[0]
+            ? (p.images[0].startsWith("http")
+                ? p.images[0]
+                : window.API_BASE + p.images[0])
+            : "/images/placeholder.png"
+        }"
+        class="card-img-top"
+      />
 
-          <div class="card-body d-flex flex-column">
-            <h5>${p.name}</h5>
+      <div class="card-body d-flex flex-column">
+        <h5>${p.name}</h5>
 
-            <div class="text-danger fw-bold">
-              ${formatShopPrice(p.flashSale?.salePrice)}
-            </div>
-
-            <div class="small text-muted text-decoration-line-through">
-              ${formatShopPrice(p.price)}
-            </div>
-
-            <div class="small text-danger mb-2">
-              Save up to ₱${Number(p.flashSale?.discountAmount || 0).toLocaleString("en-PH")}
-            </div>
-
-            <a href="/product.html?id=${p._id}" class="btn btn-dark btn-sm mt-auto">
-              View Product
-            </a>
-          </div>
+        <div class="text-danger fw-bold">
+          ${formatShopPrice(p.flashSale?.salePrice)}
         </div>
-      </div>
-    `).join("");
 
+        <div class="small text-muted text-decoration-line-through">
+          ${formatShopPrice(p.price)}
+        </div>
+
+        <div class="small text-danger mb-2">
+          Save up to ₱${Number(p.flashSale?.discountAmount || 0).toLocaleString("en-PH")}
+        </div>
+
+        <a href="/product.html?id=${p._id}" class="btn btn-dark btn-sm mt-auto">
+          View Product
+        </a>
+      </div>
+    </div>
+  </div>
+`).join("");
+new Swiper(".flashSaleSwiper", {
+  slidesPerView: 1.2,
+  spaceBetween: 16,
+  loop: false,
+  pagination: {
+    el: ".swiper-pagination",
+    clickable: true
+  },
+  navigation: {
+    nextEl: ".swiper-button-next",
+    prevEl: ".swiper-button-prev"
+  },
+  breakpoints: {
+    576: {
+      slidesPerView: 2
+    },
+    992: {
+      slidesPerView: 3
+    }
+  }
+});
   } catch (err) {
     console.error(err);
   }

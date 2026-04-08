@@ -118,7 +118,13 @@
           <span id="homeFlashSaleTimer" class="fw-semibold text-danger"></span>
         </div>
 
-        <div id="flashSaleProducts" class="row g-4"></div>
+        <div class="swiper flashSaleSwiper">
+          <div class="swiper-wrapper" id="flashSaleProducts"></div>
+
+          <div class="swiper-button-next"></div>
+          <div class="swiper-button-prev"></div>
+          <div class="swiper-pagination"></div>
+        </div>
       </div>
     </section>
     <!-- CATEGORY CALLOUTS -->
@@ -296,6 +302,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="./js/ui.js"></script>
     <script src="./js/navbar.js"></script>
     <script src="./js/welcome.js"></script>

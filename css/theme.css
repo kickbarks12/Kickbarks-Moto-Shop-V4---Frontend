@@ -1879,3 +1879,23 @@ border-left:4px solid #22c55e;
 [data-flash-ends-at] {
   letter-spacing: 0.3px;
 }
+.flashSaleSwiper {
+  padding-bottom: 40px;
+}
+
+.flashSaleSwiper .swiper-slide {
+  height: auto;
+}
+
+.flashSaleSwiper .product-card {
+  height: 100%;
+}
+
+.flashSaleSwiper .swiper-button-next,
+.flashSaleSwiper .swiper-button-prev {
+  color: #dc3545;
+}
+
+.flashSaleSwiper .swiper-pagination-bullet-active {
+  background: #dc3545;
+}
