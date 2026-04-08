@@ -1872,3 +1872,10 @@ border-left:4px solid #22c55e;
     padding: 10px 0;
   }
 }
+#flashSaleTimer {
+  letter-spacing: 0.3px;
+}
+
+[data-flash-ends-at] {
+  letter-spacing: 0.3px;
+}

@@ -59,6 +59,51 @@ function getBikeStock(productObj, bike) {
 
   return 0;
 }
+function isFlashSaleProduct(product) {
+  return product?.flashSale?.active === true;
+}
+
+function getFlashSalePrice(product, bike) {
+  const key = bike.toLowerCase();
+
+  if (key.includes("mio")) return Number(product.flashSale?.salePrice?.mio || 0);
+  if (key.includes("aerox")) return Number(product.flashSale?.salePrice?.aerox || 0);
+  if (key.includes("click")) return Number(product.flashSale?.salePrice?.click || 0);
+  if (key.includes("adv")) return Number(product.flashSale?.salePrice?.adv || 0);
+
+  return 0;
+}
+function formatCountdown(endTime) {
+  if (!endTime) return "Flash Sale Ended";
+
+  const diff = new Date(endTime).getTime() - Date.now();
+
+  if (diff <= 0) return "Flash Sale Ended";
+
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+  return `Flash ends in ${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+
+let flashCountdownTimer = null;
+
+function startProductFlashCountdown(endTime) {
+  const timerEl = document.getElementById("flashSaleTimer");
+  if (!timerEl) return;
+
+  if (flashCountdownTimer) {
+    clearInterval(flashCountdownTimer);
+  }
+
+  function updateTimer() {
+    timerEl.textContent = formatCountdown(endTime);
+  }
+
+  updateTimer();
+  flashCountdownTimer = setInterval(updateTimer, 1000);
+}
 
 function updateStickyBar() {
   const price = document.getElementById("price")?.innerText || "";
@@ -106,16 +151,30 @@ function validateButtonState() {
   }
 
   btn.disabled = false;
-  btn.innerText = "Add to Cart";
+  btn.innerText = isFlashSaleProduct(product) ? "Buy Now" : "Add to Cart";
   btn.style.opacity = "1";
 }
 
 function renderProduct(p) {
+  if (isFlashSaleProduct(p)) {
+  const nameEl = document.getElementById("name");
+  nameEl.innerHTML = `
+    ${p.name}
+    <span class="badge bg-danger ms-2">FLASH SALE</span>
+  `;
+}
   product = p;
 
   document.getElementById("name").innerText = p.name || "";
   document.getElementById("desc").innerText = p.description || "";
-
+const flashTimerEl = document.getElementById("flashSaleTimer");
+if (flashTimerEl) {
+  if (isFlashSaleProduct(p)) {
+    startProductFlashCountdown(p.flashSale?.endsAt);
+  } else {
+    flashTimerEl.textContent = "";
+  }
+}
   document.getElementById("image").src =
     p.images?.[0]
       ? (p.images[0].startsWith("http")
@@ -123,7 +182,24 @@ function renderProduct(p) {
           : window.API_BASE + p.images[0])
       : "/images/placeholder.png";
 
-  document.getElementById("price").innerText = Number(p.price?.mio || 0).toLocaleString("en-PH");
+  const defaultBike = "Mio I 125";
+const defaultOriginalPrice = getBikePrice(p, defaultBike);
+const defaultFlashPrice = getFlashSalePrice(p, defaultBike);
+
+if (isFlashSaleProduct(p)) {
+  document.getElementById("price").innerHTML = `
+    <div class="text-danger fw-bold">₱${Number(defaultFlashPrice).toLocaleString("en-PH")}</div>
+    <div class="small text-muted text-decoration-line-through">
+      ₱${Number(defaultOriginalPrice).toLocaleString("en-PH")}
+    </div>
+    <div class="small text-danger">
+      Save ₱${Number(p.flashSale?.discountAmount || 0).toLocaleString("en-PH")}
+    </div>
+  `;
+} else {
+  document.getElementById("price").innerText =
+    Number(defaultOriginalPrice).toLocaleString("en-PH");
+}
 
   const stockInfo = document.getElementById("stockInfo");
   if (stockInfo) {
@@ -175,7 +251,12 @@ function add() {
     return;
   }
 
-  const selectedPrice = getBikePrice(product, bike);
+  const isFlash = isFlashSaleProduct(product);
+
+const originalPrice = getBikePrice(product, bike);
+const selectedPrice = isFlash
+  ? getFlashSalePrice(product, bike)
+  : originalPrice;
   const selectedStock = getBikeStock(product, bike);
 
   if (selectedStock <= 0) {
@@ -192,16 +273,28 @@ function add() {
   const found = cart.find(i => i.productId === product._id && i.bike === bike);
 
   if (found) {
-    found.qty += qty;
-  } else {
-    cart.push({
-      productId: product._id,
-      name: product.name,
-      price: selectedPrice,
-      qty,
-      bike,
-      image: product.images?.[0] || ""
-    });
+  found.qty += qty;
+
+  if (isFlash) {
+    found.price = selectedPrice;
+    found.originalPrice = originalPrice;
+    found.flashSale = true;
+  }
+} else {
+   cart.push({
+  productId: product._id,
+  name: product.name,
+
+  price: selectedPrice,
+  originalPrice: originalPrice,
+
+  flashSale: isFlash,
+  flashSaleDiscount: isFlash ? product.flashSale?.discountAmount || 0 : 0,
+
+  qty,
+  bike,
+  image: product.images?.[0] || ""
+});
   }
 
   localStorage.setItem("cart", JSON.stringify(cart));
@@ -232,11 +325,29 @@ function handleBikeChange() {
     return;
   }
 
-  const newPrice = getBikePrice(product, bikeRaw);
+  const isFlash = isFlashSaleProduct(product);
+
+const originalPrice = getBikePrice(product, bikeRaw);
+const newPrice = isFlash
+  ? getFlashSalePrice(product, bikeRaw)
+  : originalPrice;
   const stock = getBikeStock(product, bikeRaw);
   currentStock = stock;
 
-  document.getElementById("price").innerText = Number(newPrice).toLocaleString("en-PH");
+  if (isFlash) {
+  document.getElementById("price").innerHTML = `
+    <div class="text-danger fw-bold">₱${Number(newPrice).toLocaleString("en-PH")}</div>
+    <div class="small text-muted text-decoration-line-through">
+      ₱${Number(originalPrice).toLocaleString("en-PH")}
+    </div>
+    <div class="small text-danger">
+      Save ₱${Number(product.flashSale?.discountAmount || 0).toLocaleString("en-PH")}
+    </div>
+  `;
+} else {
+  document.getElementById("price").innerText =
+    Number(newPrice).toLocaleString("en-PH");
+}
 
   if (stockBox) {
     stockBox.innerText = `Available Stocks: ${stock}`;

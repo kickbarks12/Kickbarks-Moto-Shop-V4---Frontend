@@ -21,7 +21,13 @@ function syncCartToServer(cartItems) {
     body: JSON.stringify({ cart: cartItems })
   }).catch(err => console.error("Cart sync failed", err));
 }
+function formatPeso(value) {
+  return `₱${Number(value || 0).toLocaleString("en-PH")}`;
+}
 
+function isFlashSaleItem(item) {
+  return item.flashSale === true;
+}
 async function loadCart() {
   const localCart = JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -126,13 +132,32 @@ function renderCart() {
       </div>
 
       <div class="cart-info">
-        <div class="cart-item-title">${item.name || ""}</div>
-        ${item.bike ? `<div class="cart-bike">Bike: ${item.bike}</div>` : ""}
-      </div>
+  <div class="cart-item-title">${item.name || ""}</div>
+  ${item.bike ? `<div class="cart-bike">Bike: ${item.bike}</div>` : ""}
+  ${
+    isFlashSaleItem(item)
+      ? `<div class="small text-danger fw-semibold">Flash Sale Price Locked In</div>`
+      : ""
+  }
+</div>
 
       <div class="cart-price">
-        ₱${Number(item.price || 0).toLocaleString("en-PH")}
-      </div>
+  ${
+    isFlashSaleItem(item)
+      ? `
+        <div class="text-danger fw-bold">${formatPeso(item.price)}</div>
+        <div class="small text-muted text-decoration-line-through">
+          ${formatPeso(item.originalPrice || item.price)}
+        </div>
+        <div class="small">
+          <span class="badge bg-danger">Flash Sale</span>
+        </div>
+      `
+      : `
+        <div class="fw-bold">${formatPeso(item.price)}</div>
+      `
+  }
+</div>
 
       <div class="cart-qty">
         <input

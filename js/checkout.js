@@ -87,7 +87,21 @@ function renderCheckoutItems() {
       <div>
         <div style="font-weight:600">${item.name || ""}</div>
         ${item.bike ? `<div style="font-size:13px;color:#777">Bike: ${item.bike}</div>` : ""}
-        <div>${qty} × ₱${price.toLocaleString("en-PH")} = ₱${lineTotal.toLocaleString("en-PH")}</div>
+        ${
+  item.flashSale
+    ? `
+      <div class="text-danger fw-semibold">Flash Sale</div>
+      <div>
+        ${qty} × ₱${price.toLocaleString("en-PH")} = ₱${lineTotal.toLocaleString("en-PH")}
+      </div>
+      <div class="small text-muted text-decoration-line-through">
+        Original: ₱${Number(item.originalPrice || price).toLocaleString("en-PH")}
+      </div>
+    `
+    : `
+      <div>${qty} × ₱${price.toLocaleString("en-PH")} = ₱${lineTotal.toLocaleString("en-PH")}</div>
+    `
+}
       </div>
     </div>
   </li>

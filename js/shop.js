@@ -84,7 +84,58 @@ function getMinPrice(product) {
 
   return prices.length ? Math.min(...prices) : 0;
 }
+function isFlashSaleProduct(product) {
+  return product?.flashSale?.active === true;
+}
 
+function getFlashSalePrice(product, bike) {
+  const key = bike.toLowerCase();
+
+  if (key.includes("mio")) return Number(product.flashSale?.salePrice?.mio || 0);
+  if (key.includes("aerox")) return Number(product.flashSale?.salePrice?.aerox || 0);
+  if (key.includes("click")) return Number(product.flashSale?.salePrice?.click || 0);
+  if (key.includes("adv")) return Number(product.flashSale?.salePrice?.adv || 0);
+
+  return 0;
+}
+function formatCountdown(endTime) {
+  if (!endTime) return "Flash Sale Ended";
+
+  const diff = new Date(endTime).getTime() - Date.now();
+
+  if (diff <= 0) return "Flash Sale Ended";
+
+  const h = Math.floor(diff / (1000 * 60 * 60));
+  const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+  return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+}
+
+let shopTimer = null;
+
+function startShopCountdowns() {
+  const els = document.querySelectorAll("[data-flash-end]");
+
+  if (!els.length) return;
+
+  if (shopTimer) clearInterval(shopTimer);
+
+  function update() {
+    els.forEach(el => {
+      const end = el.getAttribute("data-flash-end");
+      const t = formatCountdown(end);
+
+      el.textContent =
+        t === "Flash Sale Ended"
+          ? t
+          : `Ends in ${t}`;
+    });
+  }
+
+  update();
+  shopTimer = setInterval(update, 1000);
+}
 async function loadWishlistIds() {
   try {
     const res = await fetch(`${window.API_BASE}/api/users/wishlist-ids`, {
@@ -143,13 +194,22 @@ function renderProducts(products) {
 
     return `
       <div class="col-6 col-md-4 col-lg-4">
-        <div class="product-card">
+        <div class="product-card position-relative">
 
           <!-- wishlist -->
           <button
             class="wishlist ${Array.isArray(wishlistIds) && wishlistIds.includes(p._id) ? "active" : ""}"
             onclick="toggleWishlist('${p._id}')"
           >♥</button>
+          ${
+  isFlashSaleProduct(p)
+    ? `
+      <span class="badge bg-danger position-absolute top-0 start-0 m-2">
+        FLASH SALE
+      </span>
+    `
+    : ""
+}
 
           <!-- image -->
           <a href="/product.html?id=${p._id}" class="product-image">
@@ -171,9 +231,29 @@ function renderProducts(products) {
             </div>
 
             <!-- price -->
-            <div class="price fw-bold">
-              ${formatShopPrice(p.price)}
-            </div>
+            ${
+  isFlashSaleProduct(p)
+    ? `
+      <div class="price fw-bold text-danger">
+        ${formatShopPrice(p.flashSale?.salePrice)}
+      </div>
+
+      <div class="small text-muted text-decoration-line-through">
+        ${formatShopPrice(p.price)}
+      </div>
+
+      <div class="small text-danger fw-semibold">
+        Save ₱${Number(p.flashSale?.discountAmount || 0).toLocaleString()}
+      </div>
+
+      <div class="small fw-semibold" data-flash-end="${p.flashSale?.endsAt || ""}"></div>
+    `
+    : `
+      <div class="price fw-bold">
+        ${formatShopPrice(p.price)}
+      </div>
+    `
+}
             <div class="text-muted small">
   ${p.category || "Motorcycle Part"}
 </div>
@@ -185,18 +265,25 @@ function renderProducts(products) {
 
             <!-- button -->
             <button
-              class="add-to-cart"
-              ${!isUserLoggedIn || isOutOfStock ? "disabled" : ""}
-              onclick='addCart(${JSON.stringify(p)})'
-            >
-              ${
-                isOutOfStock
-                  ? "Out of Stock"
-                  : !isUserLoggedIn
-                  ? "Login to Add"
-                  : "Add to Cart"
-              }
-            </button>
+  class="add-to-cart"
+  ${!isUserLoggedIn || isOutOfStock ? "disabled" : ""}
+  onclick='${
+    isFlashSaleProduct(p)
+      ? `buyNow(${JSON.stringify(p)})`
+      : `addCart(${JSON.stringify(p)})`
+  }'
+>
+  ${
+    isOutOfStock
+      ? "Out of Stock"
+      : !isUserLoggedIn
+      ? "Login to Add"
+      : isFlashSaleProduct(p)
+      ? "Buy Now"
+      : "Add to Cart"
+  }
+</button>
+              
 
           </div>
         </div>
@@ -206,6 +293,7 @@ function renderProducts(products) {
 
   // products.forEach(p => loadProductRating(p._id));
 }
+startShopCountdowns();
 
 function updateProductCount(count) {
   const counter = document.getElementById("productCount");
@@ -285,6 +373,31 @@ function addCart(product) {
 
   checkPopupQty();
 }
+function buyNow(product) {
+  if (!isUserLoggedIn) {
+    showToast("Please login first", "error");
+    window.location.href = "/login.html";
+    return;
+  }
+
+  selectedProductForCart = product;
+
+  if (bikeModal) bikeModal.style.display = "flex";
+  if (popupQty) popupQty.value = 1;
+  popupCurrentStock = 0;
+
+  if (bikeSelect) bikeSelect.value = "";
+  if (popupStock) {
+    popupStock.innerHTML = "Select motorcycle to see stock";
+    popupStock.style.color = "black";
+  }
+
+  checkPopupQty();
+
+  // 🔥 CHANGE BUTTON LABEL
+  const btn = document.querySelector("#bikeModal .btn-dark");
+  if (btn) btn.innerText = "Buy Now";
+}
 
 function closeBikeModal() {
   if (bikeModal) bikeModal.style.display = "none";
@@ -311,7 +424,12 @@ function confirmBike() {
   if (!product) return;
 
   const stock = getBikeStock(product, bike);
-  const selectedPrice = getBikePrice(product, bike);
+  const isFlash = isFlashSaleProduct(product);
+
+const originalPrice = getBikePrice(product, bike);
+const selectedPrice = isFlash
+  ? getFlashSalePrice(product, bike)
+  : originalPrice;
 
   if (stock <= 0) {
     showToast(`Out of stock for ${bike}`, "error");
@@ -327,16 +445,26 @@ function confirmBike() {
   const found = cart.find(i => i.productId === product._id && i.bike === bike);
 
   if (found) {
-    found.qty += qty;
-  } else {
+  found.qty += qty;
+
+  // 🔥 update flash sale info if needed
+  if (isFlash) {
+    found.price = selectedPrice;
+    found.originalPrice = originalPrice;
+    found.flashSale = true;
+  }
+} else {
     cart.push({
-      productId: product._id,
-      name: product.name,
-      price: selectedPrice,
-      qty,
-      bike,
-      image: product.images?.[0] || ""
-    });
+  productId: product._id,
+  name: product.name,
+  originalPrice: originalPrice,
+  price: selectedPrice,
+  flashSale: isFlash,
+  flashSaleDiscount: isFlash ? product.flashSale?.discountAmount || 0 : 0,
+  qty,
+  bike,
+  image: product.images?.[0] || ""
+});
   }
 
   localStorage.setItem("cart", JSON.stringify(cart));
@@ -346,8 +474,12 @@ function confirmBike() {
     window.updateCartCount();
   }
 
+if (isFlash) {
+  window.location.href = "/cart.html";
+} else {
   showToast("Added to cart");
   closeBikeModal();
+}
 }
 
 function updateBikeStockUI() {
@@ -404,8 +536,8 @@ function checkPopupQty() {
   }
 
   addBtn.disabled = false;
-  addBtn.innerText = "Add to Cart";
-  addBtn.style.opacity = "1";
+addBtn.innerText = isFlashSaleProduct(selectedProductForCart) ? "Buy Now" : "Add to Cart";
+addBtn.style.opacity = "1";
 }
 
 async function loadProductRating(productId) {
@@ -481,5 +613,6 @@ searchInput?.addEventListener("input", debouncedApplyFilters);
 
 window.toggleWishlist = toggleWishlist;
 window.addCart = addCart;
+window.buyNow = buyNow;
 window.closeBikeModal = closeBikeModal;
 window.confirmBike = confirmBike;
