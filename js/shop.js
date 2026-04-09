@@ -4,12 +4,13 @@ let wishlistIds = [];
 let allProducts = [];
 let activeCategory = "";
 let popupCurrentStock = 0;
-
+let selectedBikeModel = "";
+const bikeButtonsWrap = document.getElementById("bikeButtons");
 const productList = document.getElementById("productList");
 const searchInput = document.getElementById("searchInput");
 const priceFilter = document.getElementById("priceFilter");
 const bikeModal = document.getElementById("bikeModal");
-const bikeSelect = document.getElementById("bikeSelect");
+
 const popupQty = document.getElementById("popupQty");
 const popupStock = document.getElementById("popupStock");
 
@@ -299,8 +300,9 @@ function renderProducts(products) {
   }).join("");
 
   // products.forEach(p => loadProductRating(p._id));
+  startShopCountdowns();
 }
-startShopCountdowns();
+
 
 function updateProductCount(count) {
   const counter = document.getElementById("productCount");
@@ -367,18 +369,32 @@ function addCart(product) {
   }
 
   selectedProductForCart = product;
-
-  if (bikeModal) bikeModal.style.display = "flex";
-  if (popupQty) popupQty.value = 1;
+  selectedBikeModel = "";
   popupCurrentStock = 0;
 
-  if (bikeSelect) bikeSelect.value = "";
+  bikeModal.style.display = "flex";
+  if (popupQty) popupQty.value = 1;
+
+  document.getElementById("popupProductName").innerText = product.name;
+  document.getElementById("popupProductPrice").innerText = formatShopPrice(product.price);
+
+  document.getElementById("popupProductImage").src =
+    product.images?.[0]
+      ? (product.images[0].startsWith("http")
+          ? product.images[0]
+          : window.API_BASE + product.images[0])
+      : "/images/placeholder.png";
+
   if (popupStock) {
-    popupStock.innerHTML = "Select motorcycle to see stock";
+    popupStock.innerText = "Select bike";
     popupStock.style.color = "black";
   }
 
+  renderBikeButtons(product);
   checkPopupQty();
+
+  const btn = document.querySelector(".btn-bike-confirm");
+  if (btn) btn.innerText = "Add to Cart";
 }
 function buyNow(product) {
   if (!isUserLoggedIn) {
@@ -388,21 +404,33 @@ function buyNow(product) {
   }
 
   selectedProductForCart = product;
+  selectedBikeModel = "";
+  popupCurrentStock = 0;
 
   if (bikeModal) bikeModal.style.display = "flex";
   if (popupQty) popupQty.value = 1;
-  popupCurrentStock = 0;
 
-  if (bikeSelect) bikeSelect.value = "";
+  document.getElementById("popupProductName").innerText = product.name;
+  document.getElementById("popupProductPrice").innerText = isFlashSaleProduct(product)
+    ? formatShopPrice(product.flashSale?.salePrice || product.price)
+    : formatShopPrice(product.price);
+
+  document.getElementById("popupProductImage").src =
+    product.images?.[0]
+      ? (product.images[0].startsWith("http")
+          ? product.images[0]
+          : window.API_BASE + product.images[0])
+      : "/images/placeholder.png";
+
   if (popupStock) {
-    popupStock.innerHTML = "Select motorcycle to see stock";
+    popupStock.innerText = "Select bike";
     popupStock.style.color = "black";
   }
 
+  renderBikeButtons(product);
   checkPopupQty();
 
-  // 🔥 CHANGE BUTTON LABEL
-  const btn = document.querySelector("#bikeModal .btn-dark");
+  const btn = document.querySelector(".btn-bike-confirm");
   if (btn) btn.innerText = "Buy Now";
 }
 
@@ -419,7 +447,7 @@ function confirmBike() {
     return;
   }
 
-  const bike = bikeSelect?.value.trim();
+  const bike = selectedBikeModel.trim();
   const qty = Number(popupQty?.value || 1);
   const product = selectedProductForCart;
 
@@ -490,38 +518,31 @@ if (isFlash) {
 }
 
 function updateBikeStockUI() {
-  if (!selectedProductForCart || !bikeSelect || !popupStock) return;
-
-  const bike = bikeSelect.value.trim();
-  if (!bike) {
-    popupCurrentStock = 0;
-    popupStock.innerHTML = "Select motorcycle to see stock";
+  if (!selectedBikeModel) {
+    popupStock.innerText = "Select bike";
     popupStock.style.color = "black";
-    checkPopupQty();
     return;
   }
 
-  const stock = getBikeStock(selectedProductForCart, bike);
+  const stock = getBikeStock(selectedProductForCart, selectedBikeModel);
   popupCurrentStock = stock;
 
-  if (stock <= 0) {
-    popupStock.innerHTML = "❌ Out of stock";
-    popupStock.style.color = "red";
-  } else {
-    popupStock.innerHTML = `Available Stocks: ${stock}`;
+  if (stock > 0) {
+    popupStock.innerText = `Available Stocks: ${stock}`;
     popupStock.style.color = "green";
+  } else {
+    popupStock.innerText = "Out of stock";
+    popupStock.style.color = "red";
   }
-
-  checkPopupQty();
 }
 
 function checkPopupQty() {
   const qty = Number(popupQty?.value || 1);
-  const addBtn = document.querySelector("#bikeModal .btn-dark");
+  const addBtn = document.querySelector(".btn-bike-confirm");
 
   if (!addBtn) return;
 
-  if (!bikeSelect?.value.trim()) {
+  if (!selectedBikeModel.trim()) {
     addBtn.disabled = true;
     addBtn.innerText = "Select Bike First";
     addBtn.style.opacity = "0.6";
@@ -543,8 +564,8 @@ function checkPopupQty() {
   }
 
   addBtn.disabled = false;
-addBtn.innerText = isFlashSaleProduct(selectedProductForCart) ? "Buy Now" : "Add to Cart";
-addBtn.style.opacity = "1";
+  addBtn.innerText = isFlashSaleProduct(selectedProductForCart) ? "Buy Now" : "Add to Cart";
+  addBtn.style.opacity = "1";
 }
 
 async function loadProductRating(productId) {
@@ -611,15 +632,45 @@ document.addEventListener("DOMContentLoaded", async () => {
 const debouncedApplyFilters = debounce(applyFilters, 250);
 searchInput?.addEventListener("input", debouncedApplyFilters);
   priceFilter?.addEventListener("change", applyFilters);
-  bikeSelect?.addEventListener("change", updateBikeStockUI);
   popupQty?.addEventListener("input", checkPopupQty);
 
   await loadProducts();
   checkPopupQty();
 });
+function getAvailableBikeModels(product) {
+  const models = [
+    { key: "mio", label: "Mio I 125" },
+    { key: "aerox", label: "Aerox 155" },
+    { key: "click", label: "Click 125i" },
+    { key: "adv", label: "ADV 160" }
+  ];
 
+  return models
+    .filter(model =>
+      Number(product?.price?.[model.key] || 0) > 0 ||
+      Number(product?.stock?.[model.key] || 0) > 0
+    )
+    .map(model => model.label);
+}
+
+function renderBikeButtons(product) {
+  bikeButtonsWrap.innerHTML = getAvailableBikeModels(product).map(model => `
+    <button class="bike-option-btn ${selectedBikeModel === model ? "active":""}"
+      onclick="selectBikeModel('${model}')">
+      ${model}
+    </button>
+  `).join("");
+}
+
+function selectBikeModel(model) {
+  selectedBikeModel = model;
+  renderBikeButtons(selectedProductForCart);
+  updateBikeStockUI();
+  checkPopupQty();
+}
 window.toggleWishlist = toggleWishlist;
 window.addCart = addCart;
 window.buyNow = buyNow;
 window.closeBikeModal = closeBikeModal;
 window.confirmBike = confirmBike;
+window.selectBikeModel = selectBikeModel;
