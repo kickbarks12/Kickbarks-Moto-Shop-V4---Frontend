@@ -88,7 +88,7 @@ function formatCountdown(endTime) {
 }
 
 let flashCountdownTimer = null;
-let productFlashReloading = false;
+
 
 function startProductFlashCountdown(endTime) {
   const timerEl = document.getElementById("flashSaleTimer");
@@ -102,15 +102,8 @@ function startProductFlashCountdown(endTime) {
     const diff = new Date(endTime).getTime() - Date.now();
 
     if (diff <= 0) {
-      timerEl.textContent = "Refreshing flash sale...";
-
-      if (!productFlashReloading) {
-        productFlashReloading = true;
-        setTimeout(() => {
-          window.location.reload();
-        }, 1200);
-      }
-
+      clearInterval(flashCountdownTimer);
+      timerEl.textContent = "Flash Sale Ended";
       return;
     }
 

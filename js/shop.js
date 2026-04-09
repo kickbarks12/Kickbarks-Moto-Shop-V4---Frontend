@@ -113,7 +113,7 @@ function formatCountdown(endTime) {
 }
 
 let shopTimer = null;
-let shopReloading = false;
+
 
 function startShopCountdowns() {
   const els = document.querySelectorAll("[data-flash-end]");
@@ -123,15 +123,12 @@ function startShopCountdowns() {
   if (shopTimer) clearInterval(shopTimer);
 
   function update() {
-    let expiredFound = false;
-
     els.forEach(el => {
       const end = el.getAttribute("data-flash-end");
       const diff = new Date(end).getTime() - Date.now();
 
       if (diff <= 0) {
-        el.textContent = "Refreshing...";
-        expiredFound = true;
+        el.textContent = "Flash Sale Ended";
         return;
       }
 
@@ -141,13 +138,6 @@ function startShopCountdowns() {
 
       el.textContent = `Ends in ${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
     });
-
-    if (expiredFound && !shopReloading) {
-      shopReloading = true;
-      setTimeout(() => {
-        window.location.reload();
-      }, 1200);
-    }
   }
 
   update();
