@@ -77,7 +77,7 @@ function renderCheckoutItems() {
               ? (item.image.startsWith("http")
                   ? item.image
                   : (window.API_BASE || "") + item.image)
-              : "/images/placeholder.png"
+              : "./images/logo.png"
           }"
           alt="${item.name || "Product"}"
           style="width:80px; height:80px; object-fit:cover; border-radius:8px;"

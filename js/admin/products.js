@@ -162,7 +162,7 @@ async function loadProducts() {
     products.forEach(p => {
       const img = (p.images && p.images.length > 0)
         ? p.images[0]
-        : "https://via.placeholder.com/60?text=No+Image";
+        : "../images/logo.png";
 
       const stockData =
   p.stock && typeof p.stock === "object"
@@ -189,7 +189,7 @@ const totalStock = Object.values(stockData)
           <td>
             <img src="${img}"
                  style="width:65px;height:65px;object-fit:cover;border-radius:10px;border:1px solid #eee"
-                 onerror="this.src='https://via.placeholder.com/60?text=No+Image'">
+                 onerror="this.src='../images/logo.png'">
           </td>
           <td>
             ${p.name}<br/>
@@ -256,7 +256,7 @@ async function editProduct(id) {
                         ? p.images.map(img => `
                           <img src="${img}"
                                style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid #ddd"
-                               onerror="this.src='https://via.placeholder.com/80?text=No+Image'">
+                               onerror="this.src='../images/logo.png'">
                         `).join("")
                         : `<span class="text-muted">No images</span>`
                       }

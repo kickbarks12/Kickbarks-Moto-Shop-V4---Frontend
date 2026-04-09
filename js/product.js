@@ -194,7 +194,7 @@ if (flashTimerEl) {
       ? (p.images[0].startsWith("http")
           ? p.images[0]
           : window.API_BASE + p.images[0])
-      : "/images/placeholder.png";
+      : "./images/logo.png";
 
   const defaultBike = "Mio I 125";
 const defaultOriginalPrice = getBikePrice(p, defaultBike);

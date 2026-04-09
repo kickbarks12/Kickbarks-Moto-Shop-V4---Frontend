@@ -371,7 +371,7 @@ function addCart(product) {
       ? (product.images[0].startsWith("http")
           ? product.images[0]
           : window.API_BASE + product.images[0])
-      : "/images/placeholder.png";
+      : "./images/logo.png";
 
   if (popupStock) {
     popupStock.innerText = "Select bike";
@@ -408,7 +408,7 @@ function buyNow(product) {
       ? (product.images[0].startsWith("http")
           ? product.images[0]
           : window.API_BASE + product.images[0])
-      : "/images/placeholder.png";
+      : "./images/logo.png";
 
   if (popupStock) {
     popupStock.innerText = "Select bike";

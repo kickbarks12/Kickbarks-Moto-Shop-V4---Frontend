@@ -124,7 +124,7 @@ function renderCart() {
               ? (item.image.startsWith("http")
                   ? item.image
                   : window.API_BASE + item.image)
-              : "/images/placeholder.png"
+              : "./images/logo.png"
           }"
           loading="lazy"
           alt="${item.name || "Cart item"}"
