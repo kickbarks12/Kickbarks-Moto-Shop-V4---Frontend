@@ -1,7 +1,45 @@
 // js/admin/products.js
 const API = "https://kickbarks-moto-shop.onrender.com/api";
 let currentSort = { key: null, direction: "asc" };
+function addBikeField(name = "", price = "", stock = "") {
+  const container = document.getElementById("bikeInputs");
 
+  const div = document.createElement("div");
+  div.className = "d-flex flex-wrap gap-2 align-items-center";
+
+  div.innerHTML = `
+    <input class="form-control bike-name" placeholder="Bike (e.g. NMAX 155)" value="${name}">
+    <input type="number" class="form-control bike-price" placeholder="Price" value="${price}">
+    <input type="number" class="form-control bike-stock" placeholder="Stock" value="${stock}">
+    <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()">×</button>
+  `;
+
+  container.appendChild(div);
+}
+function collectBikeData() {
+  const rows = document.querySelectorAll("#bikeInputs > div");
+
+  const price = {};
+  const stock = {};
+
+  rows.forEach(row => {
+    const name = row.querySelector(".bike-name").value;
+    const p = row.querySelector(".bike-price").value;
+    const s = row.querySelector(".bike-stock").value;
+
+    if (!name) return;
+
+    const key = name
+      .toLowerCase()
+      .replace(/\s+/g, "")
+      .replace(/[^a-z0-9]/g, "");
+
+    price[key] = Number(p || 0);
+    stock[key] = Number(s || 0);
+  });
+
+  return { price, stock };
+}
 function formatPriceRange(product) {
   if (!product.price) return "₱0";
 
@@ -22,7 +60,28 @@ document.getElementById("productForm")?.addEventListener("submit", async e => {
   e.preventDefault();
 
   const form = e.target;
-  const data = new FormData(form);
+  const bikeData = collectBikeData();
+  if (!Object.keys(bikeData.price).length) {
+  showToast("Please add at least one bike variant");
+  return;
+}
+
+const data = new FormData(form);
+
+// remove old fixed fields if still present
+data.delete("price_mio");
+data.delete("price_aerox");
+data.delete("price_click");
+data.delete("price_adv");
+
+data.delete("stock_mio");
+data.delete("stock_aerox");
+data.delete("stock_click");
+data.delete("stock_adv");
+
+// send dynamic data
+data.append("price", JSON.stringify(bikeData.price));
+data.append("stock", JSON.stringify(bikeData.stock));
 
   try {
     const res = await adminFetch(`${API}/products`, {
@@ -46,8 +105,15 @@ document.getElementById("productForm")?.addEventListener("submit", async e => {
     }
 
     showToast("Product added successfully");
-    form.reset();
-    loadProducts();
+form.reset();
+
+const bikeInputs = document.getElementById("bikeInputs");
+if (bikeInputs) {
+  bikeInputs.innerHTML = "";
+  addBikeField();
+}
+
+loadProducts();
   } catch (err) {
     console.error(err);
     showToast("Cannot connect to server");
@@ -86,11 +152,9 @@ async function loadProducts() {
         : "https://via.placeholder.com/60?text=No+Image";
 
       const stockData = p.stock || {};
-      const totalStock =
-        (stockData.mio || 0) +
-        (stockData.aerox || 0) +
-        (stockData.click || 0) +
-        (stockData.adv || 0);
+const totalStock = Object.values(stockData)
+  .map(v => Number(v) || 0)
+  .reduce((sum, v) => sum + v, 0);
 
       let stockClass = "out";
       let stockText = "Out of stock";
@@ -285,7 +349,9 @@ async function deleteProduct(id) {
     showToast("Failed to delete product");
   }
 }
-
+if (document.getElementById("bikeInputs")) {
+  addBikeField();
+}
 if (document.getElementById("productsTable")) {
   loadProducts();
 }
