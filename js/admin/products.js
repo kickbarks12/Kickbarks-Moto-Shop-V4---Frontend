@@ -16,6 +16,19 @@ function addBikeField(name = "", price = "", stock = "") {
 
   container.appendChild(div);
 }
+function addEditBikeField(container, name = "", price = "", stock = "") {
+  const div = document.createElement("div");
+  div.className = "d-flex flex-wrap gap-2 align-items-center";
+
+  div.innerHTML = `
+    <input class="form-control edit-bike-name" placeholder="Bike (e.g. PCX 160)" value="${name}">
+    <input type="number" class="form-control edit-bike-price" placeholder="Price" value="${price}">
+    <input type="number" class="form-control edit-bike-stock" placeholder="Stock" value="${stock}">
+    <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()">×</button>
+  `;
+
+  container.appendChild(div);
+}
 function collectBikeData() {
   const rows = document.querySelectorAll("#bikeInputs > div");
 
@@ -214,59 +227,27 @@ async function editProduct(id) {
               <div class="modal-body">
                 <div class="row g-3">
                   <div class="col-md-6">
-                    <label class="form-label">Product Name</label>
-                    <input name="name" class="form-control" value="${p.name || ""}" required>
-                  </div>
+  <label class="form-label">Product Name</label>
+  <input name="name" class="form-control" value="${p.name || ""}" required>
+</div>
 
-                  <div class="col-md-6">
-                    <label class="form-label">Category</label>
-                    <input name="category" class="form-control" value="${p.category || ""}" required>
-                  </div>
+<div class="col-md-6">
+  <label class="form-label">Category</label>
+  <input name="category" class="form-control" value="${p.category || ""}" required>
+</div>
 
-                  <div class="col-md-3">
-                    <label class="form-label">Mio Price</label>
-                    <input name="price_mio" type="number" class="form-control" value="${p.price?.mio || 0}" required>
-                  </div>
+<div class="col-12">
+  <label class="form-label fw-semibold">Bike Variants</label>
+  <div id="editBikeInputs" class="d-flex flex-column gap-2"></div>
+  <button type="button" class="btn btn-outline-dark btn-sm mt-2" id="addEditBikeBtn">
+    + Add Bike
+  </button>
+</div>
 
-                  <div class="col-md-3">
-                    <label class="form-label">Aerox Price</label>
-                    <input name="price_aerox" type="number" class="form-control" value="${p.price?.aerox || 0}" required>
-                  </div>
-
-                  <div class="col-md-3">
-                    <label class="form-label">Click Price</label>
-                    <input name="price_click" type="number" class="form-control" value="${p.price?.click || 0}" required>
-                  </div>
-
-                  <div class="col-md-3">
-                    <label class="form-label">ADV Price</label>
-                    <input name="price_adv" type="number" class="form-control" value="${p.price?.adv || 0}" required>
-                  </div>
-
-                  <div class="col-md-3">
-                    <label class="form-label">Mio Stock</label>
-                    <input name="stock_mio" type="number" class="form-control" value="${p.stock?.mio || 0}" required>
-                  </div>
-
-                  <div class="col-md-3">
-                    <label class="form-label">Aerox Stock</label>
-                    <input name="stock_aerox" type="number" class="form-control" value="${p.stock?.aerox || 0}" required>
-                  </div>
-
-                  <div class="col-md-3">
-                    <label class="form-label">Click Stock</label>
-                    <input name="stock_click" type="number" class="form-control" value="${p.stock?.click || 0}" required>
-                  </div>
-
-                  <div class="col-md-3">
-                    <label class="form-label">ADV Stock</label>
-                    <input name="stock_adv" type="number" class="form-control" value="${p.stock?.adv || 0}" required>
-                  </div>
-
-                  <div class="col-12">
-                    <label class="form-label">Description</label>
-                    <textarea name="description" class="form-control" rows="3">${p.description || ""}</textarea>
-                  </div>
+<div class="col-12">
+  <label class="form-label">Description</label>
+  <textarea name="description" class="form-control" rows="3">${p.description || ""}</textarea>
+</div>
 
                   <div class="col-12">
                     <label class="form-label">Current Images</label>
@@ -305,6 +286,40 @@ async function editProduct(id) {
 
     document.body.insertAdjacentHTML("beforeend", modalHtml);
 
+    const editBikeInputs = document.getElementById("editBikeInputs");
+const addEditBikeBtn = document.getElementById("addEditBikeBtn");
+
+if (addEditBikeBtn) {
+  addEditBikeBtn.addEventListener("click", () => {
+    addEditBikeField(editBikeInputs);
+  });
+}
+
+const priceObj = p.price || {};
+const stockObj = p.stock || {};
+
+const bikeKeys = new Set([
+  ...Object.keys(priceObj),
+  ...Object.keys(stockObj)
+]);
+
+if (bikeKeys.size) {
+  [...bikeKeys].forEach(key => {
+    const label = key
+      .replace(/([a-z])([0-9])/gi, "$1 $2")
+      .replace(/\b\w/g, c => c.toUpperCase());
+
+    addEditBikeField(
+      editBikeInputs,
+      label,
+      Number(priceObj[key] || 0),
+      Number(stockObj[key] || 0)
+    );
+  });
+} else {
+  addEditBikeField(editBikeInputs);
+}
+
     const modalEl = document.getElementById("editProductModal");
     const modal = new bootstrap.Modal(modalEl);
     modal.show();
@@ -313,6 +328,42 @@ async function editProduct(id) {
       e.preventDefault();
 
       const formData = new FormData(e.target);
+
+const rows = document.querySelectorAll("#editBikeInputs > div");
+const price = {};
+const stock = {};
+
+rows.forEach(row => {
+  const name = row.querySelector(".edit-bike-name").value;
+  const pVal = row.querySelector(".edit-bike-price").value;
+  const sVal = row.querySelector(".edit-bike-stock").value;
+
+  if (!name) return;
+
+  const key = name
+    .toLowerCase()
+    .replace(/\s+/g, "")
+    .replace(/[^a-z0-9]/g, "");
+
+  price[key] = Number(pVal || 0);
+  stock[key] = Number(sVal || 0);
+});
+
+formData.delete("price_mio");
+formData.delete("price_aerox");
+formData.delete("price_click");
+formData.delete("price_adv");
+formData.delete("stock_mio");
+formData.delete("stock_aerox");
+formData.delete("stock_click");
+formData.delete("stock_adv");
+if (!Object.keys(price).length) {
+  showToast("Please add at least one bike variant");
+  return;
+}
+formData.append("price", JSON.stringify(price));
+formData.append("stock", JSON.stringify(stock));
+
 
       const update = await adminFetch(`${API}/products/${id}`, {
         method: "PUT",
