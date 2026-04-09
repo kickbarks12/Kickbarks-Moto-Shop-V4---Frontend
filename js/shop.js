@@ -52,52 +52,43 @@ function formatShopPrice(priceObj) {
     ? `₱${min.toLocaleString()}`
     : `₱${min.toLocaleString()} - ₱${max.toLocaleString()}`;
 }
+function normalizeBikeKey(bike) {
+  return String(bike || "")
+    .toLowerCase()
+    .replace(/\s+/g, "")
+    .replace(/[^a-z0-9]/g, "");
+}
+
+function formatBikeLabel(key) {
+  return String(key || "")
+    .replace(/([a-z])([0-9])/gi, "$1 $2")
+    .replace(/\b\w/g, c => c.toUpperCase());
+}
 
 function getBikePrice(product, bike) {
-  const key = bike.toLowerCase();
-
-  if (key.includes("mio")) return Number(product.price?.mio || 0);
-  if (key.includes("aerox")) return Number(product.price?.aerox || 0);
-  if (key.includes("click")) return Number(product.price?.click || 0);
-  if (key.includes("adv")) return Number(product.price?.adv || 0);
-
-  return 0;
+  const key = normalizeBikeKey(bike);
+  return Number(product?.price?.[key] || 0);
 }
 
 function getBikeStock(product, bike) {
-  const key = bike.toLowerCase();
-
-  if (key.includes("mio")) return Number(product.stock?.mio || 0);
-  if (key.includes("aerox")) return Number(product.stock?.aerox || 0);
-  if (key.includes("click")) return Number(product.stock?.click || 0);
-  if (key.includes("adv")) return Number(product.stock?.adv || 0);
-
-  return 0;
+  const key = normalizeBikeKey(bike);
+  return Number(product?.stock?.[key] || 0);
 }
 
+
 function getMinPrice(product) {
-  const prices = [
-    Number(product.price?.mio || 0),
-    Number(product.price?.aerox || 0),
-    Number(product.price?.click || 0),
-    Number(product.price?.adv || 0)
-  ].filter(v => v > 0);
+  const prices = Object.values(product.price || {})
+    .map(v => Number(v))
+    .filter(v => v > 0);
 
   return prices.length ? Math.min(...prices) : 0;
 }
 function isFlashSaleProduct(product) {
   return product?.flashSale?.active === true;
 }
-
 function getFlashSalePrice(product, bike) {
-  const key = bike.toLowerCase();
-
-  if (key.includes("mio")) return Number(product.flashSale?.salePrice?.mio || 0);
-  if (key.includes("aerox")) return Number(product.flashSale?.salePrice?.aerox || 0);
-  if (key.includes("click")) return Number(product.flashSale?.salePrice?.click || 0);
-  if (key.includes("adv")) return Number(product.flashSale?.salePrice?.adv || 0);
-
-  return 0;
+  const key = normalizeBikeKey(bike);
+  return Number(product?.flashSale?.salePrice?.[key] || 0);
 }
 function formatCountdown(endTime) {
   if (!endTime) return "Flash Sale Ended";
@@ -191,14 +182,11 @@ function renderProducts(products) {
           : window.API_BASE + p.images[0])
       : "/images/placeholder.png";
 
-    const isOutOfStock =
-      getMinPrice(p) === 0 ||
-      (
-        (p.stock?.mio || 0) +
-        (p.stock?.aerox || 0) +
-        (p.stock?.click || 0) +
-        (p.stock?.adv || 0)
-      ) === 0;
+    const totalStock = Object.values(p.stock || {})
+  .map(v => Number(v) || 0)
+  .reduce((sum, v) => sum + v, 0);
+
+const isOutOfStock = getMinPrice(p) === 0 || totalStock === 0;
 
     return `
       <div class="col-6 col-md-4 col-lg-4">
@@ -638,19 +626,17 @@ searchInput?.addEventListener("input", debouncedApplyFilters);
   checkPopupQty();
 });
 function getAvailableBikeModels(product) {
-  const models = [
-    { key: "mio", label: "Mio I 125" },
-    { key: "aerox", label: "Aerox 155" },
-    { key: "click", label: "Click 125i" },
-    { key: "adv", label: "ADV 160" }
-  ];
+  const keys = new Set([
+    ...Object.keys(product?.price || {}),
+    ...Object.keys(product?.stock || {})
+  ]);
 
-  return models
-    .filter(model =>
-      Number(product?.price?.[model.key] || 0) > 0 ||
-      Number(product?.stock?.[model.key] || 0) > 0
+  return [...keys]
+    .filter(key =>
+      Number(product?.price?.[key] || 0) > 0 ||
+      Number(product?.stock?.[key] || 0) > 0
     )
-    .map(model => model.label);
+    .map(key => formatBikeLabel(key));
 }
 
 function renderBikeButtons(product) {
