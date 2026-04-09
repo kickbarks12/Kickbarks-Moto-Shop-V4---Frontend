@@ -1997,3 +1997,113 @@ border-left:4px solid #22c55e;
   border:none;
   border-radius:10px;
 }
+@media (max-width: 768px) {
+  .bike-modal-overlay {
+    padding: 12px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .bike-modal-card {
+    width: 100%;
+    max-width: 100%;
+    padding: 18px 16px;
+    border-radius: 16px;
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+
+  .bike-modal-close {
+    top: 8px;
+    right: 10px;
+    font-size: 22px;
+  }
+
+  .bike-modal-top {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+
+  .bike-modal-image-box {
+    width: 100%;
+    min-height: 220px;
+    max-height: 220px;
+    padding: 10px;
+  }
+
+  .bike-modal-image-box img {
+    width: 100%;
+    max-width: 220px;
+    max-height: 180px;
+    object-fit: contain;
+  }
+
+  .bike-modal-info h3 {
+    font-size: 20px;
+    line-height: 1.2;
+    margin-bottom: 10px;
+    padding-right: 24px;
+  }
+
+  .bike-modal-meta {
+    gap: 8px;
+    font-size: 16px;
+  }
+
+  .bike-selection-wrap {
+    margin-bottom: 18px;
+  }
+
+  .bike-label {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .bike-buttons {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .bike-option-btn {
+    min-height: 48px;
+    padding: 10px 8px;
+    font-size: 16px;
+  }
+
+  .bike-modal-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: stretch;
+  }
+
+  .bike-qty-group {
+    width: 100%;
+  }
+
+  .bike-qty-group input {
+    width: 100%;
+    height: 46px;
+    font-size: 16px;
+  }
+
+  .bike-modal-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .btn-bike-confirm,
+  .btn-bike-cancel {
+    width: 100%;
+    min-width: 0;
+    height: 50px;
+    font-size: 16px;
+  }
+}
+.bike-modal-info h3 {
+  word-break: break-word;
+}

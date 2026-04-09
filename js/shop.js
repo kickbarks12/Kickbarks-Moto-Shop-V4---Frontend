@@ -528,7 +528,7 @@ function updateBikeStockUI() {
   popupCurrentStock = stock;
 
   if (stock > 0) {
-    popupStock.innerText = `Available Stocks: ${stock}`;
+    popupStock.innerText = stock;
     popupStock.style.color = "green";
   } else {
     popupStock.innerText = "Out of stock";
