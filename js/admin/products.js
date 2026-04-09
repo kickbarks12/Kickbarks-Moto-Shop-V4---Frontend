@@ -151,7 +151,11 @@ async function loadProducts() {
         ? p.images[0]
         : "https://via.placeholder.com/60?text=No+Image";
 
-      const stockData = p.stock || {};
+      const stockData =
+  p.stock && typeof p.stock === "object"
+    ? Object.fromEntries(Object.entries(p.stock))
+    : {};
+
 const totalStock = Object.values(stockData)
   .map(v => Number(v) || 0)
   .reduce((sum, v) => sum + v, 0);
