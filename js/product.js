@@ -16,6 +16,37 @@ function setProductLoadingState(loading) {
   }
 }
 
+function getAvailableBikeModels(productObj) {
+  const keys = new Set([
+    ...Object.keys(productObj?.price || {}),
+    ...Object.keys(productObj?.stock || {})
+  ]);
+
+  return [...keys]
+    .filter(key =>
+      Number(productObj?.price?.[key] || 0) > 0 ||
+      Number(productObj?.stock?.[key] || 0) > 0
+    )
+    .map(key => formatBikeLabel(key));
+}
+
+function formatShopPrice(priceObj) {
+  if (!priceObj) return "₱0";
+
+  const values = Object.values(priceObj)
+    .map(v => Number(v))
+    .filter(v => !isNaN(v) && v > 0);
+
+  if (!values.length) return "₱0";
+
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+
+  return min === max
+    ? `₱${min.toLocaleString("en-PH")}`
+    : `₱${min.toLocaleString("en-PH")} - ₱${max.toLocaleString("en-PH")}`;
+}
+
 async function checkLoginStatus() {
   try {
     const data = await window.fetchJSONCached(
@@ -38,41 +69,38 @@ function syncCartToServer(cart) {
   }).catch(err => console.error("Cart sync failed", err));
 }
 
+function normalizeBikeKey(bike) {
+  return String(bike || "")
+    .toLowerCase()
+    .replace(/\s+/g, "")
+    .replace(/[^a-z0-9]/g, "");
+}
+
+function formatBikeLabel(key) {
+  return String(key || "")
+    .replace(/([a-z])([0-9])/gi, "$1 $2")
+    .replace(/\b\w/g, c => c.toUpperCase());
+}
+
 function getBikePrice(productObj, bike) {
-  const key = bike.toLowerCase();
-
-  if (key.includes("mio")) return Number(productObj.price?.mio || 0);
-  if (key.includes("aerox")) return Number(productObj.price?.aerox || 0);
-  if (key.includes("click")) return Number(productObj.price?.click || 0);
-  if (key.includes("adv")) return Number(productObj.price?.adv || 0);
-
-  return 0;
+  const key = normalizeBikeKey(bike);
+  return Number(productObj?.price?.[key] || 0);
 }
 
 function getBikeStock(productObj, bike) {
-  const key = bike.toLowerCase();
-
-  if (key.includes("mio")) return Number(productObj.stock?.mio || 0);
-  if (key.includes("aerox")) return Number(productObj.stock?.aerox || 0);
-  if (key.includes("click")) return Number(productObj.stock?.click || 0);
-  if (key.includes("adv")) return Number(productObj.stock?.adv || 0);
-
-  return 0;
+  const key = normalizeBikeKey(bike);
+  return Number(productObj?.stock?.[key] || 0);
 }
+
 function isFlashSaleProduct(product) {
   return product?.flashSale?.active === true;
 }
 
-function getFlashSalePrice(product, bike) {
-  const key = bike.toLowerCase();
-
-  if (key.includes("mio")) return Number(product.flashSale?.salePrice?.mio || 0);
-  if (key.includes("aerox")) return Number(product.flashSale?.salePrice?.aerox || 0);
-  if (key.includes("click")) return Number(product.flashSale?.salePrice?.click || 0);
-  if (key.includes("adv")) return Number(product.flashSale?.salePrice?.adv || 0);
-
-  return 0;
+function getFlashSalePrice(productObj, bike) {
+  const key = normalizeBikeKey(bike);
+  return Number(productObj?.flashSale?.salePrice?.[key] || 0);
 }
+
 function formatCountdown(endTime) {
   if (!endTime) return "Flash Sale Ended";
 
@@ -170,57 +198,88 @@ function validateButtonState() {
 }
 
 function renderProduct(p) {
-  if (isFlashSaleProduct(p)) {
-  const nameEl = document.getElementById("name");
-  nameEl.innerHTML = `
-    ${p.name}
-    <span class="badge bg-danger ms-2">FLASH SALE</span>
-  `;
-}
   product = p;
 
-  document.getElementById("name").innerText = p.name || "";
-  document.getElementById("desc").innerText = p.description || "";
-const flashTimerEl = document.getElementById("flashSaleTimer");
-if (flashTimerEl) {
-  if (isFlashSaleProduct(p)) {
-    startProductFlashCountdown(p.flashSale?.endsAt);
-  } else {
-    flashTimerEl.textContent = "";
+  const nameEl = document.getElementById("name");
+  const descEl = document.getElementById("desc");
+  const imageEl = document.getElementById("image");
+  const priceEl = document.getElementById("price");
+  const stockInfo = document.getElementById("stockInfo");
+  const bikeSelect = document.getElementById("bikeModel");
+  const flashTimerEl = document.getElementById("flashSaleTimer");
+
+  if (nameEl) {
+    nameEl.innerHTML = isFlashSaleProduct(p)
+      ? `${p.name} <span class="badge bg-danger ms-2">FLASH SALE</span>`
+      : (p.name || "");
   }
-}
-  document.getElementById("image").src =
-    p.images?.[0]
+
+  if (descEl) descEl.innerText = p.description || "";
+
+  if (imageEl) {
+    imageEl.src = p.images?.[0]
       ? (p.images[0].startsWith("http")
           ? p.images[0]
           : window.API_BASE + p.images[0])
       : "./images/logo.png";
-
-  const defaultBike = "Mio I 125";
-const defaultOriginalPrice = getBikePrice(p, defaultBike);
-const defaultFlashPrice = getFlashSalePrice(p, defaultBike);
-
-if (isFlashSaleProduct(p)) {
-  document.getElementById("price").innerHTML = `
-    <div class="text-danger fw-bold">₱${Number(defaultFlashPrice).toLocaleString("en-PH")}</div>
-    <div class="small text-muted text-decoration-line-through">
-      ₱${Number(defaultOriginalPrice).toLocaleString("en-PH")}
-    </div>
-    <div class="small text-danger">
-      Save ₱${Number(p.flashSale?.discountAmount || 0).toLocaleString("en-PH")}
-    </div>
-  `;
-} else {
-  document.getElementById("price").innerText =
-    Number(defaultOriginalPrice).toLocaleString("en-PH");
-}
-
-  const stockInfo = document.getElementById("stockInfo");
-  if (stockInfo) {
-    stockInfo.innerText = "Select a motorcycle model to see stock";
-    stockInfo.style.color = "#666";
   }
 
+  if (flashTimerEl) {
+    if (isFlashSaleProduct(p)) {
+      startProductFlashCountdown(p.flashSale?.endsAt);
+    } else {
+      flashTimerEl.textContent = "";
+    }
+  }
+
+  const bikeOptions = getAvailableBikeModels(p);
+  const defaultBike = bikeOptions[0] || "";
+
+  if (bikeSelect) {
+    bikeSelect.innerHTML = `
+  ${bikeOptions.map(model => `
+    <option value="${model}" ${model === defaultBike ? "selected" : ""}>
+      ${model}
+    </option>
+  `).join("")}
+`;
+  }
+if (defaultBike) {
+  const isFlash = isFlashSaleProduct(p);
+
+  const originalPrice = getBikePrice(p, defaultBike);
+  const flashPrice = getFlashSalePrice(p, defaultBike);
+  const priceToShow = (isFlash && flashPrice > 0) ? flashPrice : originalPrice;
+
+  const stock = getBikeStock(p, defaultBike);
+  currentStock = stock;
+
+  if (priceEl) {
+    if (isFlash) {
+      priceEl.innerHTML = `
+        <div class="text-danger fw-bold">₱${Number(priceToShow).toLocaleString("en-PH")}</div>
+        <div class="small text-muted text-decoration-line-through">
+          ₱${Number(originalPrice).toLocaleString("en-PH")}
+        </div>
+        <div class="small text-danger">
+          Save ₱${Number(p.flashSale?.discountAmount || 0).toLocaleString("en-PH")}
+        </div>
+      `;
+    } else {
+      priceEl.innerText = `₱${Number(priceToShow).toLocaleString("en-PH")}`;
+    }
+  }
+
+  if (stockInfo) {
+    if (stock > 0) {
+      stockInfo.innerText = `Available Stocks: ${stock}`;
+      stockInfo.style.color = "green";
+    } else {
+      stockInfo.innerText = `Out of stock for ${defaultBike}`;
+      stockInfo.style.color = "red";
+    }
+  }
+}
   updateStickyBar();
   validateButtonState();
 }
@@ -326,49 +385,66 @@ function handleBikeChange() {
 
   const bikeRaw = document.getElementById("bikeModel")?.value.trim();
   const stockBox = document.getElementById("stockInfo");
+  const priceEl = document.getElementById("price");
 
   if (!bikeRaw) {
     currentStock = 0;
-    document.getElementById("price").innerText = Number(product.price?.mio || 0).toLocaleString("en-PH");
+
+    if (priceEl) {
+      priceEl.innerHTML = isFlashSaleProduct(product)
+        ? `
+          <div class="text-danger fw-bold">${formatShopPrice(product.flashSale?.salePrice || {})}</div>
+          <div class="small text-muted text-decoration-line-through">
+            ${formatShopPrice(product.price || {})}
+          </div>
+          <div class="small text-danger">
+            Save ₱${Number(product.flashSale?.discountAmount || 0).toLocaleString("en-PH")}
+          </div>
+        `
+        : formatShopPrice(product.price || {});
+    }
+
     if (stockBox) {
       stockBox.innerText = "Select a motorcycle model to see stock";
       stockBox.style.color = "#666";
     }
+
     updateStickyBar();
     validateButtonState();
     return;
   }
 
   const isFlash = isFlashSaleProduct(product);
-
-const originalPrice = getBikePrice(product, bikeRaw);
-const newPrice = isFlash
-  ? getFlashSalePrice(product, bikeRaw)
-  : originalPrice;
+  const originalPrice = getBikePrice(product, bikeRaw);
+  const flashPrice = getFlashSalePrice(product, bikeRaw);
+  const newPrice = (isFlash && flashPrice > 0) ? flashPrice : originalPrice;
   const stock = getBikeStock(product, bikeRaw);
+
   currentStock = stock;
 
-  if (isFlash) {
-  document.getElementById("price").innerHTML = `
-    <div class="text-danger fw-bold">₱${Number(newPrice).toLocaleString("en-PH")}</div>
-    <div class="small text-muted text-decoration-line-through">
-      ₱${Number(originalPrice).toLocaleString("en-PH")}
-    </div>
-    <div class="small text-danger">
-      Save ₱${Number(product.flashSale?.discountAmount || 0).toLocaleString("en-PH")}
-    </div>
-  `;
-} else {
-  document.getElementById("price").innerText =
-    Number(newPrice).toLocaleString("en-PH");
-}
+  if (priceEl) {
+    if (isFlash) {
+      priceEl.innerHTML = `
+        <div class="text-danger fw-bold">₱${Number(newPrice).toLocaleString("en-PH")}</div>
+        <div class="small text-muted text-decoration-line-through">
+          ₱${Number(originalPrice).toLocaleString("en-PH")}
+        </div>
+        <div class="small text-danger">
+          Save ₱${Number(product.flashSale?.discountAmount || 0).toLocaleString("en-PH")}
+        </div>
+      `;
+    } else {
+      priceEl.innerText = `₱${Number(newPrice).toLocaleString("en-PH")}`;
+    }
+  }
 
   if (stockBox) {
-    stockBox.innerText = `Available Stocks: ${stock}`;
-    stockBox.style.color = stock > 0 ? "green" : "red";
-
-    if (stock <= 0) {
+    if (stock > 0) {
+      stockBox.innerText = `Available Stocks: ${stock}`;
+      stockBox.style.color = "green";
+    } else {
       stockBox.innerText = `Out of stock for ${bikeRaw}`;
+      stockBox.style.color = "red";
     }
   }
 
