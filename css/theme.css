@@ -2110,14 +2110,14 @@ border-left:4px solid #22c55e;
 /* Facebook Button */
 .fb-float {
   position: fixed;
-  bottom: 85px;
+  bottom: 20px;
   right: 20px;
   background: #1877f2;
   color: #fff;
   font-size: 22px;
   text-decoration: none;
-  width: 50px;
-  height: 50px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   display: flex;
   align-items: center;
