@@ -2107,3 +2107,54 @@ border-left:4px solid #22c55e;
 .bike-modal-info h3 {
   word-break: break-word;
 }
+/* Messenger Button */
+.messenger-float {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #0084ff;
+  color: #fff;
+  font-size: 24px;
+  text-decoration: none;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  z-index: 999;
+  transition: 0.3s;
+}
+
+.messenger-float:hover {
+  transform: scale(1.1);
+  background: #006fd6;
+}
+
+/* Facebook Button */
+.fb-float {
+  position: fixed;
+  bottom: 85px;
+  right: 20px;
+  background: #1877f2;
+  color: #fff;
+  font-size: 22px;
+  text-decoration: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  transition: 0.3s;
+}
+
+.fb-float:hover {
+  transform: scale(1.1);
+}
+.messenger-float i,
+.fb-float i {
+  font-size: 22px;
+}
